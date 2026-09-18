@@ -30,7 +30,7 @@
     "next-sitemap": "^4.2.3",
     "nodemailer": "^8.0.1",
     "qrcode": "^1.5.4",
-    "react": "19.2.3",
+    "react": "19.3.0",
     "react-dom": "19.2.3",
     "react-paystack": "^6.0.0",
     "shadcn": "^4.0.5",
