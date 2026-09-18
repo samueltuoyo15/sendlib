@@ -28,7 +28,7 @@
     "mongoose": "^8.15.0",
     "next": "16.2.5",
     "next-sitemap": "^4.2.3",
-    "nodemailer": "^8.0.1",
+    "nodemailer": "^10.0.10",
     "qrcode": "^1.5.4",
     "react": "19.3.0",
     "react-dom": "19.2.3",

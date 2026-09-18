@@ -57,8 +57,8 @@ importers:
         specifier: ^4.2.3
         version: 4.2.3(next@16.2.5(@babel/core@7.29.7(supports-color@7.2.0))(react-dom@19.2.3(react@19.3.0))(react@19.3.0))
       nodemailer:
-        specifier: ^8.0.1
-        version: 8.0.11
+        specifier: ^10.0.10
+        version: 10.0.10
       qrcode:
         specifier: ^1.5.4
         version: 1.5.4
@@ -2431,9 +2431,9 @@ packages:
     resolution: {integrity: sha512-J6l92tKHX6w8Jy5nO1Vuc01NoIiRGi/d6qBKVxh+IQ8Cr3b6HbVNfKiF8ZpFKufTwpwxMmce2W3iQZ861ZRyTg==}
     engines: {node: '>=18'}
 
-  nodemailer@8.0.11:
-    resolution: {integrity: sha512-nrO/pDAUKl+wXX+lx16tDLbnm0fW6sK/x8mgohaCpg+CdCEl482bD4tCuAZk2DyliruiNTIZxRCoWkDqJEnAiA==}
-    engines: {node: '>=6.0.0'}
+  nodemailer@10.0.10:
+    resolution: {integrity: sha512-He9XskOFms62SyAKkLu8CcGcYHAo+BSHSsORI8s4PJH8qZgZY4L4lDfvyN0twvmbpyG+eGrxpyBlskj9d9rJ8A==}
+    engines: {node: '>=20.0.0'}
 
   npm-run-path@4.0.1:
     resolution: {integrity: sha512-S48WzZW777zhNIrn7gxOlISNAqi9ZC/uQFnRdbeIHhZhCA6UqpkOT8T1G7BvfdgP4Er8gF4sUbaS0i7QvIfCWw==}
@@ -5151,7 +5151,7 @@ snapshots:
 
   node-releases@2.0.50: {}
 
-  nodemailer@8.0.11: {}
+  nodemailer@10.0.10: {}
 
   npm-run-path@4.0.1:
     dependencies:
