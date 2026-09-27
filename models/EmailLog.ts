@@ -23,6 +23,12 @@ export interface IEmailLogDebug {
   templateSlug?: string;
 }
 
+export interface IEmailLogOpenEvent {
+  occurredAt: Date;
+  ipHash?: string;
+  userAgent?: string;
+}
+
 export interface IEmailLog extends Document {
   userId: mongoose.Types.ObjectId;
   apiKeyId?: mongoose.Types.ObjectId;
@@ -35,6 +41,13 @@ export interface IEmailLog extends Document {
   error?: string;
   templateSlug?: string;
   debug?: IEmailLogDebug;
+  trackingId?: string;
+  trackOpens?: boolean;
+  opened?: boolean;
+  openCount: number;
+  firstOpenedAt?: Date;
+  lastOpenedAt?: Date;
+  openEvents: IEmailLogOpenEvent[];
   expiresAt: Date;
   createdAt: Date;
 }
@@ -73,6 +86,19 @@ const EmailLogSchema = new Schema<IEmailLog>(
       htmlBytes: { type: Number },
       templateSlug: { type: String },
     },
+    trackingId: { type: String, sparse: true, index: true, unique: true },
+    trackOpens: { type: Boolean, default: true },
+    opened: { type: Boolean, default: false },
+    openCount: { type: Number, default: 0 },
+    firstOpenedAt: { type: Date },
+    lastOpenedAt: { type: Date },
+    openEvents: [
+      {
+        occurredAt: { type: Date, default: Date.now },
+        ipHash: { type: String },
+        userAgent: { type: String },
+      },
+    ],
     expiresAt: { type: Date, required: true, index: { expireAfterSeconds: 0 } },
   },
   { timestamps: true }

@@ -51,7 +51,7 @@ describe("2FA recovery codes", () => {
     } as unknown as IUser;
 
     await expect(verifyRecoveryCode(user, rawCode)).resolves.toBe(true);
-    expect(user.twoFactor!.recoveryCodes[0].usedAt).toBeInstanceOf(Date);
+    expect(user.twoFactor!.recoveryCodes![0]!.usedAt).toBeInstanceOf(Date);
     await expect(verifyRecoveryCode(user, rawCode)).resolves.toBe(false);
     expect(save).toHaveBeenCalledTimes(1);
   });

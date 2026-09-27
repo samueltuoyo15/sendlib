@@ -3,6 +3,7 @@ import dns from "dns";
 import axiosSrv from "@/lib/axios";
 import type { DebugIssue, DebugReport, DebugStep } from "@/lib/emailDebugger";
 import { buildDebugReport } from "@/lib/emailDebugger";
+import { generateTrackingId, injectTrackingPixel } from "@/lib/tracking";
 import { connectToRedis } from "@/lib/redis";
 import EmailLog from "@/models/EmailLog";
 import GmailAccount from "@/models/GmailAccount";
@@ -159,6 +160,7 @@ export type GmailSendOptions = {
   apiKeyId?: string | mongoose.Types.ObjectId;
   retentionDays?: number;
   plan?: "free" | "pro";
+  trackOpens?: boolean;
   attachments?: {
     filename: string;
     content: string;
@@ -190,7 +192,7 @@ function finalizeDebug(
 export async function sendGmailEmail(
   userId: string,
   options: GmailSendOptions
-): Promise<{ messageId: string | null; debug?: DebugReport }> {
+): Promise<{ messageId: string | null; trackingId?: string; debug?: DebugReport }> {
   await connectDB();
 
   let lookupEmail = options.from;
@@ -395,6 +397,17 @@ export async function sendGmailEmail(
       : options.bcc
     : undefined;
 
+  let finalHtml = options.html;
+  let trackingId: string | undefined;
+  const shouldTrack = options.trackOpens !== false && !!finalHtml;
+
+  if (shouldTrack && finalHtml) {
+    trackingId = generateTrackingId();
+    const appUrl = (process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000").replace(/\/$/, "");
+    const trackingUrl = `${appUrl}/api/track/open/${trackingId}`;
+    finalHtml = injectTrackingPixel(finalHtml, trackingUrl);
+  }
+
   const mailOptions = {
     from: options.from ?? senderEmail,
     to: toAddress,
@@ -402,7 +415,7 @@ export async function sendGmailEmail(
     bcc: bccAddress,
     replyTo: options.replyTo,
     subject: options.subject,
-    html: options.html,
+    html: finalHtml,
     text: options.text,
     attachments: options.attachments?.map((att) => ({
       filename: att.filename,
@@ -460,12 +473,17 @@ export async function sendGmailEmail(
       messageId: result.data.id ?? null,
       templateSlug: options.templateSlug,
       debug,
+      trackingId,
+      trackOpens: shouldTrack,
+      opened: false,
+      openCount: 0,
+      openEvents: [],
       expiresAt,
     });
 
     await User.findByIdAndUpdate(userId, { $inc: { monthlySentCount: 1 } });
 
-    return { messageId: result.data.id ?? null, debug };
+    return { messageId: result.data.id ?? null, trackingId, debug };
   } catch (err: unknown) {
     let errMsg = "Unknown error";
     if (isAxiosError(err)) {
@@ -490,6 +508,11 @@ export async function sendGmailEmail(
       error: errMsg,
       templateSlug: options.templateSlug,
       debug,
+      trackingId,
+      trackOpens: shouldTrack,
+      opened: false,
+      openCount: 0,
+      openEvents: [],
       expiresAt,
     });
     throw new Error(`Failed to send email via Gmail: ${errMsg}`);
