@@ -68,8 +68,8 @@ export async function GET(
         $set: {
           opened: true,
           lastOpenedAt: openDate,
-          ...(emailLog.firstOpenedAt ? {} : { firstOpenedAt: openDate }),
         },
+        $min: { firstOpenedAt: openDate },
         $inc: { openCount: 1 },
         $push: {
           openEvents: {
