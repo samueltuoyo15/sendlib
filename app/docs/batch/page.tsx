@@ -287,6 +287,18 @@ System.out.println(response.body());`,
                     req: "Optional",
                     desc: "Reply-to email address.",
                   },
+                  {
+                    field: "track_opens",
+                    type: "boolean",
+                    req: "Optional",
+                    desc: "Set false to disable open tracking for all HTML emails in the batch. Defaults to true.",
+                  },
+                  {
+                    field: "tracking",
+                    type: "object",
+                    req: "Optional",
+                    desc: 'Alternative config object. Use { "opens": false } to disable open tracking.',
+                  },
                 ].map((r) => (
                   <tr key={r.field} className="hover:bg-surface-variant/20 transition-colors">
                     <td className="px-4 py-3 font-mono text-xs">
@@ -299,6 +311,29 @@ System.out.println(response.body());`,
                 ))}
               </tbody>
             </table>
+          </div>
+
+          <div className="p-5 rounded-xl border border-outline-variant bg-surface-container-low mt-6 space-y-3">
+            <h3 className="text-base font-bold text-primary-sendlib">Open tracking</h3>
+            <p className="text-sm text-secondary">
+              Batch sends use the same open tracking behavior as <code>/api/send</code>. For HTML
+              emails, Sendlib adds a tiny invisible image to each recipient&apos;s email. When images
+              load, that recipient&apos;s email log is updated with open status, first opened time, last
+              opened time, and open count.
+            </p>
+            <p className="text-sm text-secondary">
+              Disable open tracking for the whole batch when you only want send progress and
+              delivery logs:
+            </p>
+            <pre className="p-3 rounded-lg bg-surface-container-high border border-outline-variant/50 text-xs font-mono text-white/90 overflow-x-auto">
+              {`{
+  "track_opens": false
+}`}
+            </pre>
+            <p className="text-xs text-secondary">
+              Opens are engagement signals, not guaranteed read receipts. Some email clients block
+              images, and some privacy or security systems may preload them.
+            </p>
           </div>
 
           <h3 className="text-base font-bold text-primary-sendlib mt-5 mb-3">Recipient object</h3>
