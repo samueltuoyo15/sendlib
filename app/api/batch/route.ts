@@ -35,6 +35,8 @@ const BatchRequestSchema = z.object({
   html: z.string().optional(),
   text: z.string().optional(),
   replyTo: z.string().email().optional(),
+  track_opens: z.boolean().optional(),
+  tracking: z.object({ opens: z.boolean().optional() }).optional(),
 });
 
 async function authenticateApiKey(rawKey: string): Promise<{
@@ -145,7 +147,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, message: msg }, { status: 400 });
     }
 
-    const { from, subject, recipients, html, text, replyTo } = parsed.data;
+    const { from, subject, recipients, html, text, replyTo, track_opens, tracking } = parsed.data;
+    const trackOpens =
+      typeof track_opens === "boolean"
+        ? track_opens
+        : typeof tracking?.opens === "boolean"
+          ? tracking.opens
+          : true;
 
     // Extract raw email from "Display Name <email>" format if needed
     const fromEmailMatch = from.match(/<([^>]+)>/) ?? null;
@@ -234,6 +242,7 @@ export async function POST(req: NextRequest) {
       html,
       text,
       replyTo,
+      trackOpens,
       status: "queued",
       recipients: deduped.map((r) => ({
         email: r.email,

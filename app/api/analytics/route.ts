@@ -58,6 +58,7 @@ export async function GET(req: NextRequest) {
           _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
           sent: { $sum: { $cond: [{ $eq: ["$status", "sent"] }, 1, 0] } },
           failed: { $sum: { $cond: [{ $eq: ["$status", "failed"] }, 1, 0] } },
+          opened: { $sum: { $cond: [{ $or: [{ $eq: ["$opened", true] }, { $gt: ["$openCount", 0] }] }, 1, 0] } },
         },
       },
       { $sort: { _id: 1 } },
@@ -65,9 +66,9 @@ export async function GET(req: NextRequest) {
 
     // Fill in missing dates with zero values so the frontend always has exactly 7 days
     const volumeMap = new Map(
-      volumeData.map((d: { _id: string; sent: number; failed: number }) => [
+      volumeData.map((d: { _id: string; sent: number; failed: number; opened?: number }) => [
         d._id,
-        { sent: d.sent, failed: d.failed },
+        { sent: d.sent, failed: d.failed, opened: d.opened || 0 },
       ])
     );
     const formattedVolume = [];
@@ -75,7 +76,7 @@ export async function GET(req: NextRequest) {
       const d = new Date();
       d.setDate(d.getDate() - i);
       const dateStr = d.toISOString().split("T")[0];
-      const stats = volumeMap.get(dateStr) ?? { sent: 0, failed: 0 };
+      const stats = volumeMap.get(dateStr) ?? { sent: 0, failed: 0, opened: 0 };
 
       // Format date label (e.g. "Jul 08")
       const label = d.toLocaleDateString("en-US", { month: "short", day: "2-digit" });
@@ -85,14 +86,21 @@ export async function GET(req: NextRequest) {
         label,
         sent: stats.sent,
         failed: stats.failed,
+        opened: stats.opened || 0,
       });
     }
+
+    const totalSent = volumeData.reduce((acc: number, curr: { sent: number }) => acc + curr.sent, 0);
+    const totalOpened = volumeData.reduce((acc: number, curr: { opened?: number }) => acc + (curr.opened || 0), 0);
+    const openRate = totalSent > 0 ? Math.round((totalOpened / totalSent) * 100) : 0;
 
     return NextResponse.json({
       success: true,
       data: {
         caps,
         volume: formattedVolume,
+        openRate,
+        totalOpened,
       },
     });
   } catch (err) {

@@ -280,6 +280,14 @@ System.out.println(response.body());`,
             recipient(s).
           </li>
           <li>
+            <strong>track_opens</strong> (boolean, optional): Set to <code>false</code> to disable
+            open tracking for this email. Defaults to <code>true</code> for HTML emails.
+          </li>
+          <li>
+            <strong>tracking</strong> (object, optional): Alternative tracking config. Use{" "}
+            <code>{`{ "opens": false }`}</code> to disable open tracking.
+          </li>
+          <li>
             <strong>attachments</strong> (array of objects, optional): An array of attachments to
             include:
             <ul className="list-disc pl-5 mt-2 space-y-2">
@@ -297,6 +305,28 @@ System.out.println(response.body());`,
             </ul>
           </li>
         </ul>
+
+        <div className="p-5 rounded-xl border border-outline-variant bg-surface-container-low mt-8 space-y-3">
+          <h4 className="font-bold text-primary-sendlib text-base">Open Tracking</h4>
+          <p className="text-sm text-secondary">
+            Sendlib tracks opens for HTML emails by adding a tiny invisible image to the email body.
+            When the recipient&apos;s email client loads images, Sendlib records the open status,
+            first opened time, last opened time, and open count in your email logs.
+          </p>
+          <p className="text-sm text-secondary">
+            Disable it for privacy-sensitive emails or when you only want delivery logging:
+          </p>
+          <pre className="p-3 rounded-lg bg-surface-container-high border border-outline-variant/50 text-xs font-mono text-white/90 overflow-x-auto">
+            {`{
+  "track_opens": false
+}`}
+          </pre>
+          <p className="text-xs text-secondary">
+            Open tracking depends on image loading. Some inboxes block images, while privacy and
+            security systems may preload them, so opens should be treated as engagement signals
+            rather than exact read receipts.
+          </p>
+        </div>
 
         <div className="p-4 border border-outline-variant/60 bg-surface-container-low rounded-xl text-sm text-secondary mt-8">
           Need details on rate limits or request body size caps? Check out the{" "}

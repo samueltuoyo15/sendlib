@@ -163,6 +163,8 @@ export async function POST(req: NextRequest) {
       attachments,
       template: templateSlug,
       data: templateData,
+      track_opens: rawTrackOpens,
+      tracking: rawTracking,
     } = body as {
       to?: unknown;
       subject?: unknown;
@@ -175,7 +177,16 @@ export async function POST(req: NextRequest) {
       attachments?: { filename: string; content: string; type?: string }[];
       template?: string;
       data?: Record<string, unknown>;
+      track_opens?: boolean;
+      tracking?: { opens?: boolean };
     };
+
+    const trackOpens =
+      typeof rawTrackOpens === "boolean"
+        ? rawTrackOpens
+        : typeof rawTracking?.opens === "boolean"
+          ? rawTracking.opens
+          : true;
 
     const preSteps: DebugStep[] = [
       { key: "received", label: "Request received", ok: true, detail: "POST /api/send accepted." },
@@ -449,6 +460,7 @@ export async function POST(req: NextRequest) {
       apiKeyId: apiKeyId || undefined,
       retentionDays,
       plan: plan as "free" | "pro",
+      trackOpens,
       templateSlug: usedTemplateSlug,
       debug: {
         issues,
@@ -462,6 +474,7 @@ export async function POST(req: NextRequest) {
       {
         success: true,
         messageId: result.messageId,
+        trackingId: result.trackingId,
         debug: result.debug
           ? {
               health: result.debug.health,

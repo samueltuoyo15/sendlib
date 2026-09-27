@@ -20,6 +20,13 @@ export interface EmailLog {
     htmlBytes?: number;
     templateSlug?: string;
   };
+  trackingId?: string;
+  trackOpens?: boolean;
+  opened?: boolean;
+  openCount?: number;
+  firstOpenedAt?: string;
+  lastOpenedAt?: string;
+  openEvents?: { occurredAt: string; ipHash?: string; userAgent?: string }[];
   createdAt: string;
 }
 

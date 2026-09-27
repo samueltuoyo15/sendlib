@@ -48,6 +48,12 @@ export async function GET(req: NextRequest) {
     if (from) {
       query.from = from;
     }
+    const openedParam = searchParams.get("opened")?.trim();
+    if (openedParam === "true") {
+      query.opened = true;
+    } else if (openedParam === "false") {
+      query.opened = false;
+    }
     if (search) {
       const escapedSearch = search.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
       query.$or = [
@@ -63,7 +69,7 @@ export async function GET(req: NextRequest) {
         .skip(skip)
         .limit(limit)
         .select(
-          "from to subject status provider messageId error apiKeyId templateSlug debug createdAt"
+          "from to subject status provider messageId error apiKeyId templateSlug debug trackingId trackOpens opened openCount firstOpenedAt lastOpenedAt openEvents createdAt"
         )
         .lean(),
       EmailLog.countDocuments(query),

@@ -245,33 +245,50 @@ export default function LogsPage() {
                     {log.subject}
                   </td>
                   <td className="px-6 py-4">
-                    <Badge
-                      variant={log.status === "sent" ? "outline" : "secondary"}
-                      className={`
-                        font-semibold rounded-md tracking-wider text-[10px] border-border
-                        ${log.status === "failed" ? "bg-destructive/10 text-destructive border-transparent" : "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20"}
-                      `}
-                    >
-                      {log.status === "sent" && (
-                        <HugeiconsIcon
-                          icon={CheckmarkCircle01Icon}
-                          size={12}
-                          color="currentColor"
-                          strokeWidth={1.5}
-                          className="mr-1"
-                        />
-                      )}
-                      {log.status === "failed" && (
-                        <HugeiconsIcon
-                          icon={CancelCircleIcon}
-                          size={12}
-                          color="currentColor"
-                          strokeWidth={1.5}
-                          className="mr-1"
-                        />
-                      )}
-                      {log.status}
-                    </Badge>
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <Badge
+                        variant={log.status === "sent" ? "outline" : "secondary"}
+                        className={`
+                          font-semibold rounded-md tracking-wider text-[10px] border-border
+                          ${log.status === "failed" ? "bg-destructive/10 text-destructive border-transparent" : "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20"}
+                        `}
+                      >
+                        {log.status === "sent" && (
+                          <HugeiconsIcon
+                            icon={CheckmarkCircle01Icon}
+                            size={12}
+                            color="currentColor"
+                            strokeWidth={1.5}
+                            className="mr-1"
+                          />
+                        )}
+                        {log.status === "failed" && (
+                          <HugeiconsIcon
+                            icon={CancelCircleIcon}
+                            size={12}
+                            color="currentColor"
+                            strokeWidth={1.5}
+                            className="mr-1"
+                          />
+                        )}
+                        {log.status}
+                      </Badge>
+                      {log.opened ? (
+                        <Badge
+                          variant="outline"
+                          className="font-semibold rounded-md text-[10px] bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-500/10 dark:text-blue-400 dark:border-blue-500/20"
+                        >
+                          Opened {log.openCount && log.openCount > 1 ? `(${log.openCount}x)` : ""}
+                        </Badge>
+                      ) : log.trackOpens ? (
+                        <Badge
+                          variant="outline"
+                          className="text-[10px] text-muted-foreground border-border/60"
+                        >
+                          Unopened
+                        </Badge>
+                      ) : null}
+                    </div>
                   </td>
                   <td className="px-6 py-4 text-muted-foreground whitespace-nowrap">
                     {new Date(log.createdAt).toLocaleDateString()}{" "}
@@ -421,6 +438,64 @@ export default function LogsPage() {
                   </div>
                 </div>
               </div>
+
+              {/* Open Tracking Section */}
+              {selectedLog.trackOpens && (
+                <div className="space-y-4">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-secondary">
+                    Open Tracking
+                  </h4>
+                  <div className="rounded-xl border border-outline-variant divide-y divide-outline-variant bg-surface-container-lowest overflow-hidden">
+                    <div className="p-4 flex items-center justify-between">
+                      <span className="text-xs font-semibold text-secondary">Status</span>
+                      <Badge
+                        variant="outline"
+                        className={
+                          selectedLog.opened
+                            ? "bg-blue-50 text-blue-700 border-blue-200"
+                            : "text-muted-foreground border-border/60"
+                        }
+                      >
+                        {selectedLog.opened ? `Opened (${selectedLog.openCount || 1}x)` : "Unopened"}
+                      </Badge>
+                    </div>
+                    {selectedLog.trackingId && (
+                      <div className="p-4 flex flex-col gap-1">
+                        <span className="text-xs font-semibold text-secondary">Tracking ID</span>
+                        <span className="text-xs font-mono text-on-background select-all">
+                          {selectedLog.trackingId}
+                        </span>
+                      </div>
+                    )}
+                    {selectedLog.firstOpenedAt && (
+                      <div className="p-4 flex flex-col gap-1">
+                        <span className="text-xs font-semibold text-secondary">First Opened At</span>
+                        <span className="text-sm text-on-background">
+                          {new Date(selectedLog.firstOpenedAt).toLocaleDateString()}{" "}
+                          {new Date(selectedLog.firstOpenedAt).toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            second: "2-digit",
+                          })}
+                        </span>
+                      </div>
+                    )}
+                    {selectedLog.lastOpenedAt && (
+                      <div className="p-4 flex flex-col gap-1">
+                        <span className="text-xs font-semibold text-secondary">Last Opened At</span>
+                        <span className="text-sm text-on-background">
+                          {new Date(selectedLog.lastOpenedAt).toLocaleDateString()}{" "}
+                          {new Date(selectedLog.lastOpenedAt).toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            second: "2-digit",
+                          })}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
 
               {/* Delivery Diagnostics (MessageId / Error message) */}
               <div className="space-y-4">
