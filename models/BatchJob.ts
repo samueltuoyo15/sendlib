@@ -21,6 +21,7 @@ export interface IBatchJob extends Document {
   html?: string;
   text?: string;
   replyTo?: string;
+  trackOpens?: boolean;
   status: BatchJobStatus;
   recipients: IBatchRecipient[];
   total: number;
@@ -52,6 +53,7 @@ const BatchJobSchema = new Schema<IBatchJob>(
     html: { type: String },
     text: { type: String },
     replyTo: { type: String },
+    trackOpens: { type: Boolean, default: true },
     status: {
       type: String,
       enum: ["queued", "processing", "done", "failed", "paused_limit_reached"],

@@ -109,6 +109,7 @@ async function processBatchJob(jobId: string): Promise<void> {
         apiKeyId: job.apiKeyId,
         retentionDays,
         plan: "pro",
+        trackOpens: job.trackOpens,
       });
 
       // Atomic update: mark this recipient sent, increment counter
