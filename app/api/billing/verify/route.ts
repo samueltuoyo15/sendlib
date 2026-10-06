@@ -1,6 +1,7 @@
 import { requireAuthUser } from "@/lib/auth";
 import { connectDB } from "@/lib/db";
 import { verifyPaystackTransaction } from "@/lib/paystack";
+import { isValidSubscriptionPayment } from "@/lib/paystack/validation";
 import User from "@/models/User";
 import mongoose from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
@@ -21,10 +22,24 @@ export async function GET(req: NextRequest) {
     if (reference) {
       try {
         const data = await verifyPaystackTransaction(reference);
-        if (data && data.status === "success") {
+        if (!isValidSubscriptionPayment(data, { id: authUser.id, email: authUser.email })) {
+          return NextResponse.json(
+            { success: false, message: "Payment does not match this subscription." },
+            { status: 400 }
+          );
+        }
+        if (data.status === "success") {
           const paidAt = data.paid_at ? new Date(data.paid_at) : new Date();
           const periodEnd = new Date(paidAt);
           periodEnd.setDate(periodEnd.getDate() + 31);
+
+          if (user.lastPaymentAt && paidAt <= new Date(user.lastPaymentAt)) {
+            return NextResponse.json({
+              success: true,
+              plan: user.plan || "free",
+              verified: user.plan === "pro",
+            });
+          }
 
           user.set("plan", "pro");
           user.set("subscriptionStatus", "active");

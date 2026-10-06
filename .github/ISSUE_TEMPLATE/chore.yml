@@ -14,7 +14,7 @@ body:
     id: why
     attributes:
       label: Why now
-      description: What prompted this: drift noticed, a blocker for other work, upkeep, etc.
+      description: "What prompted this: drift noticed, a blocker for other work, upkeep, etc."
     validations:
       required: true
 

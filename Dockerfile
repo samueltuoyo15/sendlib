@@ -1,4 +1,4 @@
-FROM node:23-alpine AS base
+FROM node:24-alpine AS base
 RUN apk add --no-cache tini && npm install -g pnpm@9
 
 FROM base AS deps

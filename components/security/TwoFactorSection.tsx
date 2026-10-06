@@ -3,6 +3,13 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   useBeginTwoFactorSetup,
   useConfirmTwoFactorSetup,
   useDisableTwoFactor,
@@ -259,14 +266,18 @@ export function TwoFactorSection() {
             Re-enter your password or a current authenticator code to confirm.
           </p>
           <div className="flex flex-wrap items-center gap-3">
-            <select
+            <Select
               value={reauthMethod}
-              onChange={(e) => setReauthMethod(e.target.value as "password" | "code")}
-              className="h-10 rounded-lg border border-outline-variant bg-surface px-3 text-sm text-on-background"
+              onValueChange={(val) => setReauthMethod(val as "password" | "code")}
             >
-              <option value="password">Use password</option>
-              <option value="code">Use authenticator code</option>
-            </select>
+              <SelectTrigger className="h-10 w-48 rounded-lg border border-outline-variant bg-surface px-3 text-sm text-on-background cursor-pointer">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="password">Use password</SelectItem>
+                <SelectItem value="code">Use authenticator code</SelectItem>
+              </SelectContent>
+            </Select>
             {reauthMethod === "password" ? (
               <div className="relative">
                 <Input

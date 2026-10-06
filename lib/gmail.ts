@@ -1,9 +1,12 @@
 import crypto from "crypto";
 import dns from "dns";
+import { assertSenderScope, senderEmailAddress } from "@/lib/apiKeyScope";
 import axiosSrv from "@/lib/axios";
 import type { DebugIssue, DebugReport, DebugStep } from "@/lib/emailDebugger";
 import { buildDebugReport } from "@/lib/emailDebugger";
+import { getEffectiveUserPlan } from "@/lib/paystack";
 import { connectToRedis } from "@/lib/redis";
+import ApiKey from "@/models/ApiKey";
 import EmailLog from "@/models/EmailLog";
 import GmailAccount from "@/models/GmailAccount";
 import User from "@/models/User";
@@ -68,7 +71,11 @@ export function verifyGmailState(state: string): string {
     throw new Error("State signature mismatch - possible CSRF attempt");
   }
 
-  if (Date.now() - timestamp > 10 * 60 * 1000) {
+  if (
+    !Number.isFinite(timestamp) ||
+    timestamp > Date.now() ||
+    Date.now() - timestamp > 10 * 60 * 1000
+  ) {
     throw new Error("OAuth state has expired. Please try connecting your Gmail account again.");
   }
 
@@ -187,19 +194,122 @@ function finalizeDebug(
   });
 }
 
+const GMAIL_BURST_WINDOW_MS = 1000;
+const GMAIL_BURST_MAX_WAIT_MS = 3000;
+
+export class GmailBurstLimitError extends Error {
+  readonly retryAfterSeconds: number;
+
+  constructor(senderEmail: string, retryAfterSeconds = 1) {
+    super(
+      `Too many concurrent send requests for Gmail account '${senderEmail}'. Retry after ${retryAfterSeconds} second${retryAfterSeconds === 1 ? "" : "s"}.`
+    );
+    this.name = "GmailBurstLimitError";
+    this.retryAfterSeconds = retryAfterSeconds;
+  }
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function acquireBurstSlot(
+  redis: ReturnType<typeof connectToRedis>,
+  burstKey: string,
+  burstMax: number
+): Promise<boolean> {
+  const deadline = Date.now() + GMAIL_BURST_MAX_WAIT_MS;
+  const burstScript = `
+    local now = tonumber(ARGV[1])
+    local window = tonumber(ARGV[2])
+    local max = tonumber(ARGV[3])
+    redis.call("ZREMRANGEBYSCORE", KEYS[1], 0, now - window)
+    local count = redis.call("ZCARD", KEYS[1])
+    if count >= max then
+      local oldest = redis.call("ZRANGE", KEYS[1], 0, 0, "WITHSCORES")
+      local retry = window
+      if oldest[2] then retry = math.max(1, tonumber(oldest[2]) + window - now) end
+      return {0, retry}
+    end
+    redis.call("ZADD", KEYS[1], now, now .. "-" .. math.random(1000000))
+    redis.call("EXPIRE", KEYS[1], 10)
+    return {1, 0}
+  `;
+
+  while (true) {
+    const result = (await redis.eval(
+      burstScript,
+      1,
+      burstKey,
+      Date.now(),
+      GMAIL_BURST_WINDOW_MS,
+      burstMax
+    )) as [number | string, number | string];
+
+    if (Number(result[0]) === 1) return true;
+
+    const remainingMs = deadline - Date.now();
+    if (remainingMs <= 0) return false;
+
+    const retryMs = Math.max(1, Number(result[1]) || GMAIL_BURST_WINDOW_MS);
+    await sleep(Math.min(retryMs + 25, remainingMs));
+  }
+}
+
+async function recordPreSendFailure(
+  userId: string,
+  options: GmailSendOptions,
+  senderEmail: string,
+  error: Error
+): Promise<void> {
+  const toAddress = Array.isArray(options.to) ? options.to.join(", ") : options.to;
+  const expiresAt = new Date();
+  expiresAt.setDate(expiresAt.getDate() + (options.retentionDays ?? 5));
+  const debug = finalizeDebug(options, [
+    {
+      key: "gmail",
+      label: "Gmail accepted request",
+      ok: false,
+      skipped: true,
+      detail: "Not attempted because Sendlib rejected the request before contacting Gmail.",
+    },
+    {
+      key: "sent",
+      label: "Message sent",
+      ok: false,
+      detail: error.message,
+    },
+  ]);
+
+  try {
+    await EmailLog.create({
+      userId,
+      apiKeyId: options.apiKeyId,
+      from: senderEmail,
+      to: toAddress,
+      subject: options.subject,
+      status: "failed",
+      provider: "gmail",
+      error: error.message,
+      templateSlug: options.templateSlug,
+      debug,
+      expiresAt,
+    });
+  } catch (logError) {
+    console.error(
+      "Failed to record pre-send rejection:",
+      logError instanceof Error ? logError.message : logError
+    );
+  }
+}
+
 export async function sendGmailEmail(
   userId: string,
   options: GmailSendOptions
 ): Promise<{ messageId: string | null; debug?: DebugReport }> {
   await connectDB();
 
-  let lookupEmail = options.from;
-  if (lookupEmail && lookupEmail.includes("<")) {
-    const match = lookupEmail.match(/<([^>]+)>/);
-    if (match) {
-      lookupEmail = match[1].trim();
-    }
-  }
+  const lookupEmail = options.from ? senderEmailAddress(options.from) : "";
 
   let account;
   if (!lookupEmail) {
@@ -216,36 +326,27 @@ export async function sendGmailEmail(
     throw new Error(`Gmail account '${account.gmailEmail}' is disconnected. Please reconnect.`);
 
   const user = await User.findById(userId);
-  if (!user) {
-    throw new Error("User not found.");
+  if (!user || user.disabled) {
+    throw new Error("User account is unavailable.");
   }
 
-  const isPro = options.plan === "pro";
+  if (options.apiKeyId) {
+    const key = await ApiKey.findOne({ _id: options.apiKeyId, userId, revoked: false });
+    if (!key) throw new Error("API key has been revoked.");
+    assertSenderScope(key.senderEmail, options.from ?? "");
+  }
+  const isPro = getEffectiveUserPlan(user) === "pro";
+  if (options.plan === "pro" && !isPro) throw new Error("Pro subscription is no longer active.");
 
-  // Check and reset monthly quota if reset date has passed
+  // Reset the monthly window conditionally so concurrent requests cannot
+  // overwrite increments made after another request performed the reset.
   const now = new Date();
-  if (user.monthlyLimitResetAt && now >= user.monthlyLimitResetAt) {
-    const nextReset = new Date(user.monthlyLimitResetAt);
-    nextReset.setMonth(nextReset.getMonth() + 1);
-    while (nextReset <= now) {
-      nextReset.setMonth(nextReset.getMonth() + 1);
-    }
-    user.monthlySentCount = 0;
-    user.monthlyLimitResetAt = nextReset;
-    await user.save();
-  } else if (!user.monthlyLimitResetAt) {
-    const nextReset = new Date();
-    nextReset.setMonth(nextReset.getMonth() + 1);
-    user.monthlyLimitResetAt = nextReset;
-    user.monthlySentCount = 0;
-    await user.save();
-  }
-
-  if (!isPro && (user.monthlySentCount || 0) >= 3500) {
-    throw new Error(
-      "Monthly limit reached: You have already sent 3,500 emails this month (limit for the Free plan). Please upgrade to Pro to unlock unlimited monthly sending."
-    );
-  }
+  const nextReset = new Date(user.monthlyLimitResetAt ?? now);
+  while (nextReset <= now) nextReset.setMonth(nextReset.getMonth() + 1);
+  await User.updateOne(
+    { _id: user._id, $or: [{ monthlyLimitResetAt: { $lte: now } }, { monthlyLimitResetAt: null }] },
+    { $set: { monthlySentCount: 0, monthlyLimitResetAt: nextReset } }
+  );
 
   const senderEmail = account.gmailEmail;
   const isWorkspace =
@@ -257,9 +358,9 @@ export async function sendGmailEmail(
   const utcDate = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
   const dailyKey = `daily_cap:${senderEmail}:${utcDate}`;
   const burstKey = `gmail_burst:${senderEmail}`;
-  // Burst: max 1 send per 2s for free Gmail, 2/s for Workspace
+  // Burst: max 1 send/s for personal Gmail, 2 sends/s for Workspace.
+  // A request waits up to 3 seconds for a slot before receiving a retryable 429.
   const burstMax = isWorkspace ? 2 : 1;
-  const burstWindowMs = 1000;
 
   let dailyCountAfterIncr = 0;
   let redisAvailable = false;
@@ -282,38 +383,20 @@ export async function sendGmailEmail(
       // counter on a rejected request, then throw.
       if (dailyCountAfterIncr > limit) {
         await redis.decr(dailyKey);
-        throw new Error(
+        const limitError = new Error(
           `Daily limit reached: Connected Gmail '${senderEmail}' has already sent ${limit} of its ${limit} daily allowed emails today.${!isPro ? " Upgrade to Pro to unlock higher daily sending limits." : ""}`
         );
+        await recordPreSendFailure(userId, options, senderEmail, limitError);
+        throw limitError;
       }
 
-      // Burst guard: sliding window, max burstMax per burstWindowMs
-      const burstScript = `
-        local now = tonumber(ARGV[1])
-        local window = tonumber(ARGV[2])
-        local max = tonumber(ARGV[3])
-        redis.call("ZREMRANGEBYSCORE", KEYS[1], 0, now - window)
-        local count = redis.call("ZCARD", KEYS[1])
-        if count >= max then return 0 end
-        redis.call("ZADD", KEYS[1], now, now .. "-" .. math.random(1000000))
-        redis.call("EXPIRE", KEYS[1], 10)
-        return 1
-      `;
-      const burstAllowed = (await redis.eval(
-        burstScript,
-        1,
-        burstKey,
-        Date.now(),
-        burstWindowMs,
-        burstMax
-      )) as number;
-
-      if (burstAllowed === 0) {
+      const burstAllowed = await acquireBurstSlot(redis, burstKey, burstMax);
+      if (!burstAllowed) {
         // Decrement the daily counter we just incremented
         await redis.decr(dailyKey);
-        throw new Error(
-          `Sending too fast. Please slow down requests to '${senderEmail}' to avoid triggering Gmail spam detection.`
-        );
+        const burstError = new GmailBurstLimitError(senderEmail);
+        await recordPreSendFailure(userId, options, senderEmail, burstError);
+        throw burstError;
       }
 
       redisAvailable = true;
@@ -321,20 +404,25 @@ export async function sendGmailEmail(
       // Re-throw our own limit/burst errors
       if (
         err instanceof Error &&
-        (err.message.startsWith("Daily limit") || err.message.startsWith("Sending too fast"))
+        (err.message.startsWith("Daily limit") || err instanceof GmailBurstLimitError)
       ) {
         throw err;
       }
-      // Redis infra error -- fall through to MongoDB fallback
-      console.error(
-        "Redis daily cap unavailable, falling back to MongoDB:",
-        err instanceof Error ? err.message : err
+      // Never remove sending caps during a Redis outage.
+      const unavailableError = new Error(
+        "Sending temporarily unavailable. Please try again later."
       );
+      await recordPreSendFailure(userId, options, senderEmail, unavailableError);
+      throw unavailableError;
+      // Development fallback is used only when Redis is not configured.
     }
   }
 
   // MongoDB fallback (no Redis, or Redis unavailable). Still blocks, just not race-safe.
   if (!redisAvailable) {
+    if (process.env.NODE_ENV === "production") {
+      throw new Error("Sending temporarily unavailable: Redis is required in production.");
+    }
     const startOfToday = new Date();
     startOfToday.setUTCHours(0, 0, 0, 0);
     const sentCount = await EmailLog.countDocuments({
@@ -396,6 +484,8 @@ export async function sendGmailEmail(
     : undefined;
 
   const mailOptions = {
+    disableFileAccess: true,
+    disableUrlAccess: true,
     from: options.from ?? senderEmail,
     to: toAddress,
     cc: ccAddress,
@@ -419,6 +509,21 @@ export async function sendGmailEmail(
     .replace(/\//g, "_")
     .replace(/=+$/, "");
 
+  // Reserve quota before sending; a conditional increment prevents concurrent
+  // requests from crossing the monthly cap. Release only if Gmail rejects.
+  const quotaWindow = await User.findById(user._id).select("monthlyLimitResetAt").lean();
+  const reservation = await User.updateOne(
+    {
+      _id: user._id,
+      monthlyLimitResetAt: quotaWindow?.monthlyLimitResetAt,
+      disabled: { $ne: true },
+      ...(!isPro ? { monthlySentCount: { $lt: 3500 } } : {}),
+    },
+    { $inc: { monthlySentCount: 1 } }
+  );
+  if (reservation.modifiedCount !== 1)
+    throw new Error("Monthly limit reached or account unavailable.");
+  let acceptedByGmail = false;
   try {
     const result = await axiosSrv.post(
       "https://gmail.googleapis.com/gmail/v1/users/me/messages/send",
@@ -431,6 +536,7 @@ export async function sendGmailEmail(
       }
     );
 
+    acceptedByGmail = true;
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + (options.retentionDays ?? 5));
 
@@ -463,10 +569,14 @@ export async function sendGmailEmail(
       expiresAt,
     });
 
-    await User.findByIdAndUpdate(userId, { $inc: { monthlySentCount: 1 } });
-
     return { messageId: result.data.id ?? null, debug };
   } catch (err: unknown) {
+    if (!acceptedByGmail) {
+      await User.updateOne(
+        { _id: user._id, monthlyLimitResetAt: quotaWindow?.monthlyLimitResetAt },
+        { $inc: { monthlySentCount: -1 } }
+      );
+    }
     let errMsg = "Unknown error";
     if (isAxiosError(err)) {
       errMsg = err.response?.data?.error?.message || err.message;

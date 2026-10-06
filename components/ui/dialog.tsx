@@ -61,11 +61,11 @@ function DialogContent({
       >
         <div
           className={cn(
-            "relative pointer-events-auto flex flex-col gap-5 rounded-xl bg-surface-container-lowest p-6 text-sm border border-outline-variant shadow-lg outline-none dialog-popup-animate w-full",
+            "relative pointer-events-auto flex flex-col gap-4.5 max-h-[min(88vh,680px)] overflow-y-auto custom-scrollbar rounded-xl bg-surface-container-lowest p-5 sm:p-6 text-sm border border-outline-variant outline-none dialog-popup-animate w-full",
             className
           )}
           style={{
-            width: "448px",
+            width: "460px",
             maxWidth: "calc(100vw - 2rem)",
             ...style,
           }}

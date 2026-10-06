@@ -47,6 +47,12 @@ export default function LoginPage() {
     typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("next") : null;
 
   useEffect(() => {
+    if (
+      new URLSearchParams(window.location.search).get("twoFactor") === "1" &&
+      document.cookie.split("; ").includes("pending_2fa=true")
+    ) {
+      setStep("twoFactor");
+    }
     const oauth = getOAuthError();
 
     if (oauth) {

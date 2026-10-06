@@ -54,7 +54,7 @@ export default function HomeClient() {
       color: "bg-emerald-500",
       question: "Will my emails land in the inbox?",
       answer:
-        "Yes, absolutely. Because the emails are sent using Google's official, highly trusted outbound mail servers, they inherit the absolute highest deliverability rates out of the box.",
+        "Sendlib submits messages through Google's official Gmail API, but no email service can guarantee inbox placement. Gmail and the recipient's provider still classify each accepted message using sender reputation, content, authentication, recipient engagement, and other signals.",
     },
     {
       color: "bg-pink-500",
@@ -342,7 +342,7 @@ export default function HomeClient() {
                     },
                     {
                       feature: "Free Emails Per Day",
-                      sendlib: "500 to 2,000 / account",
+                      sendlib: "200 to 1,000 / account",
                       others: "100 / day",
                     },
                     {

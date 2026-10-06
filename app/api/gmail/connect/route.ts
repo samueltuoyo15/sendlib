@@ -33,7 +33,15 @@ export async function GET(req: NextRequest) {
     }
 
     const url = getGmailAuthUrl(user.id);
-    return NextResponse.json({ success: true, url });
+    const response = NextResponse.json({ success: true, url });
+    response.cookies.set("gmail_oauth_state", new URL(url).searchParams.get("state")!, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: 600,
+    });
+    return response;
   } catch (err) {
     if (err instanceof Response) return err;
     console.error("/api/gmail/connect error:", err);

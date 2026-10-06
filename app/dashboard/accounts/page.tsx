@@ -238,27 +238,27 @@ function AccountsContent() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       {account.connected ? (
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-label-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                           <HugeiconsIcon
                             icon={CheckmarkCircle01Icon}
                             size={12}
                             color="currentColor"
-                            strokeWidth={2}
+                            strokeWidth={1.5}
                           />
                           Active
                         </span>
                       ) : (
                         <span
                           title="This account is disconnected. Please click Disconnect and then Connect New Account to re-authenticate."
-                          className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-800 border border-rose-200"
+                          className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-label-xs font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/20"
                         >
                           <HugeiconsIcon
                             icon={CancelCircleIcon}
                             size={12}
                             color="currentColor"
-                            strokeWidth={2}
+                            strokeWidth={1.5}
                           />
-                          Disconnect & Reconnect
+                          Disconnected
                         </span>
                       )}
                     </td>
@@ -269,7 +269,7 @@ function AccountsContent() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="text-rose-600 hover:text-rose-700 hover:bg-rose-50 text-xs font-semibold rounded-lg cursor-pointer"
+                        className="text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 text-xs font-semibold rounded-lg cursor-pointer"
                         onClick={() => setDisconnectEmail(account.email)}
                         disabled={isDisconnecting}
                       >

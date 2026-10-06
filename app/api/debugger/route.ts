@@ -8,6 +8,7 @@ import {
 } from "@/lib/emailDebugger";
 import { sendGmailEmail } from "@/lib/gmail";
 import { getEffectiveUserPlan } from "@/lib/paystack";
+import { readJsonBody } from "@/lib/requestBody";
 import { interpolate, isValidSlug } from "@/lib/templates";
 import EmailLog from "@/models/EmailLog";
 import EmailTemplate from "@/models/EmailTemplate";
@@ -67,13 +68,21 @@ export async function POST(req: NextRequest) {
   try {
     const user = await requireAuthUser(req);
     await connectDB();
-    const body = await req.json().catch(() => ({}));
+    const body = (await readJsonBody(req, 8 * 1024 * 1024).catch((err) => {
+      if (err instanceof Response) throw err;
+      return {};
+    })) as Record<string, unknown>;
     const shouldSend = body.send === true;
 
     let html = typeof body.html === "string" ? body.html : "";
     const text = typeof body.text === "string" ? body.text : "";
     let subject = typeof body.subject === "string" ? body.subject : "";
-    const to = body.to;
+    const to =
+      typeof body.to === "string"
+        ? body.to
+        : Array.isArray(body.to) && body.to.every((value) => typeof value === "string")
+          ? (body.to as string[])
+          : undefined;
     let from = typeof body.from === "string" ? body.from : "";
     let missingVars: string[] = [];
     let unresolvedVars: string[] = [];

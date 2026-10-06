@@ -305,6 +305,16 @@ System.out.println(response.body());`,
           </a>{" "}
           documentation page.
         </div>
+        <div className="p-4 border border-outline-variant/60 bg-surface-container-low rounded-xl text-sm text-secondary mt-4 space-y-2">
+          <p>
+            <strong className="text-primary-sendlib">Sending concurrently?</strong> Requests using
+            the same personal Gmail account are limited to one accepted send per second; Google
+            Workspace accounts are limited to two per second. Sendlib waits for up to 3 seconds for
+            a slot, then records a failed log and returns <code>429</code> with a{" "}
+            <code>Retry-After</code> header. Serialize sends per Gmail account and retry only after
+            the indicated delay, or use <code>/api/batch</code> for a recipient list.
+          </p>
+        </div>
         {/* Deliverability Best Practices */}
         <div className="mt-12 mb-8">
           <h2 className="text-xl font-bold text-primary-sendlib mb-4">
@@ -314,8 +324,10 @@ System.out.println(response.body());`,
             <p className="text-sm text-secondary leading-relaxed">
               When sending emails from a personal <code>@gmail.com</code> account (as opposed to a
               verified Google Workspace custom domain), Google&apos;s spam filters can be highly
-              aggressive. To ensure your emails reach the primary inbox rather than the spam folder,
-              we strongly recommend the following:
+              aggressive. A successful API response means Gmail accepted the message; it cannot
+              guarantee that Gmail or the recipient&apos;s provider will place it in the primary
+              inbox. To improve your chances of inbox placement, we strongly recommend the
+              following:
             </p>
             <ul className="list-disc pl-5 space-y-2 text-sm text-secondary">
               <li>

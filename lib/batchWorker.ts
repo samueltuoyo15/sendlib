@@ -129,6 +129,15 @@ async function processBatchJob(jobId: string): Promise<void> {
     } catch (err) {
       const errMsg = err instanceof Error ? err.message : "Unknown error";
 
+      if (
+        errMsg.includes("API key has been revoked") ||
+        errMsg.includes("API key sender scope") ||
+        errMsg.includes("User account is unavailable") ||
+        errMsg.includes("Pro subscription is no longer active")
+      ) {
+        await BatchJob.updateOne({ _id: job._id }, { $set: { status: "failed" } });
+        return;
+      }
       // If we hit the Google quota, pause the job immediately.
       if (errMsg.includes("Daily limit reached")) {
         console.warn(`[BatchWorker] Job ${jobId} hit daily limit. Pausing to resume later.`);

@@ -128,8 +128,18 @@ export async function verifyRecoveryCode(user: IUser, code: string): Promise<boo
   for (const entry of codes) {
     if (!safeEqual(entry.hash, candidateHash)) continue;
     if (entry.usedAt) return false; // replay protection: single-use
-    entry.usedAt = new Date();
-    await user.save();
+    const usedAt = new Date();
+    const result = await User.updateOne(
+      {
+        _id: user._id,
+        "twoFactor.recoveryCodes": {
+          $elemMatch: { hash: candidateHash, usedAt: { $exists: false } },
+        },
+      },
+      { $set: { "twoFactor.recoveryCodes.$.usedAt": usedAt } }
+    );
+    if (result.modifiedCount !== 1) return false;
+    entry.usedAt = usedAt;
     return true;
   }
   return false;

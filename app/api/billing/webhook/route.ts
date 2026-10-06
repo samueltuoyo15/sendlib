@@ -1,5 +1,6 @@
 import { connectDB } from "@/lib/db";
 import { verifyPaystackSignature } from "@/lib/paystack";
+import { isValidSubscriptionPayment } from "@/lib/paystack/validation";
 import User from "@/models/User";
 import mongoose from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
@@ -89,7 +90,13 @@ export async function POST(req: NextRequest) {
     }
 
     if (event === "charge.success") {
+      if (!isValidSubscriptionPayment(data, { id: user._id.toString(), email: user.email })) {
+        return NextResponse.json({ received: true });
+      }
       const paidAt = data.paid_at ? new Date(data.paid_at) : new Date();
+      if (user.lastPaymentAt && paidAt <= new Date(user.lastPaymentAt)) {
+        return NextResponse.json({ received: true });
+      }
       const periodEnd = data.next_payment_date
         ? new Date(data.next_payment_date)
         : new Date(paidAt.getTime() + 31 * 24 * 60 * 60 * 1000);

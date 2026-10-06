@@ -102,7 +102,7 @@ const jsonLd = {
           name: "Will my emails land in the inbox?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "Yes, absolutely. Because the emails are sent using Google's official, highly trusted outbound mail servers, they inherit the absolute highest deliverability rates out of the box.",
+            text: "Sendlib submits messages through Google's official Gmail API, but no email service can guarantee inbox placement. Gmail and the recipient's provider still classify each accepted message using sender reputation, content, authentication, recipient engagement, and other signals.",
           },
         },
         {

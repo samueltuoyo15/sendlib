@@ -270,7 +270,7 @@ export async function completeTwoFactorLogin(
   if (!sessionUsable) throw AuthErrors.invalidOrExpiredToken();
 
   const user = await User.findById(session?.userId);
-  if (!user || !isTwoFactorEnabled(user)) throw AuthErrors.invalidCredentials();
+  if (!user || user.disabled || !isTwoFactorEnabled(user)) throw AuthErrors.invalidCredentials();
 
   if (session?.failedTwoFactorAttempts >= MAX_TWO_FACTOR_ATTEMPTS) {
     await revokeSession(input.sessionToken);

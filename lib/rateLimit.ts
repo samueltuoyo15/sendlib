@@ -30,6 +30,9 @@ const memoryLimiters = new Map<string, { count: number; resetAt: number }>();
 
 function memoryRateLimit(limitKey: string, limit: number): RateLimitResult {
   const now = Date.now();
+  for (const [key, entry] of memoryLimiters) {
+    if (entry.resetAt <= now) memoryLimiters.delete(key);
+  }
   const existing = memoryLimiters.get(limitKey);
   const current = existing && existing.resetAt > now ? existing.count + 1 : 1;
   const resetAt =
@@ -48,16 +51,9 @@ export async function rateLimit(
   key: string,
   plan: "free" | "pro" = "free"
 ): Promise<RateLimitResult> {
-  const windowSeconds = 60;
-  const limit =
-    type === "auth" || type === "login" || type === "signup" || type === "password_reset"
-      ? 60
-      : plan === "pro"
-        ? 300
-        : 30;
-
-  const safeKey = crypto.createHash("sha256").update(`${type}:${plan}:${key}`).digest("hex");
-  const limitKey = `rl_${safeKey}`;
+  const limit = limitFor(type, plan);
+  const hashedKey = safeKey(type, plan, key);
+  const limitKey = `rl_${hashedKey}`;
 
   try {
     if (!process.env.REDIS_URL) {
@@ -88,7 +84,7 @@ export async function rateLimit(
       type,
       error: error instanceof Error ? error.message : "Unknown",
     });
-    const success = type === "send";
+    const success = false;
     return {
       success,
       limit,

@@ -23,14 +23,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const requestHost = req.headers.get("host") || "localhost:3000";
-    const protocol =
-      req.headers.get("x-forwarded-proto") ||
-      (requestHost.includes("localhost") ? "http" : "https");
-    const requestOrigin = `${protocol}://${requestHost}`;
-
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.APP_URL;
-    const origin = appUrl ? appUrl.replace(/\/$/, "") : requestOrigin;
+    if (!appUrl) throw new Error("Application URL is not configured.");
+    const origin = new URL(appUrl).origin;
 
     const planCode = process.env.PAYSTACK_PLAN_CODE?.trim();
 
@@ -58,12 +53,10 @@ export async function POST(req: NextRequest) {
 
     console.error("Paystack checkout error:", paystackErr || errorMessage);
 
-    const errorDetail =
-      typeof paystackErr === "object" ? JSON.stringify(paystackErr) : paystackErr || errorMessage;
     return NextResponse.json(
       {
         success: false,
-        message: `Paystack Checkout Error: ${errorDetail}`,
+        message: "Could not initialize checkout. Please try again.",
       },
       { status }
     );

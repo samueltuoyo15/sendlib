@@ -1,3 +1,4 @@
+import { requireAuthUser } from "@/lib/auth";
 import { handleGmailCallback, verifyGmailState } from "@/lib/gmail";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -14,7 +15,11 @@ export async function GET(req: NextRequest) {
 
   let userId: string;
   try {
+    if (req.cookies.get("gmail_oauth_state")?.value !== state)
+      throw new Error("OAuth browser mismatch");
+    const user = await requireAuthUser(req);
     userId = verifyGmailState(state);
+    if (userId !== user.id) throw new Error("OAuth user mismatch");
   } catch (err) {
     console.error("Gmail callback state verification failed:", err);
     return NextResponse.redirect(
@@ -25,9 +30,17 @@ export async function GET(req: NextRequest) {
   try {
     const { gmailEmail, isNew } = await handleGmailCallback(code, userId);
     const paramKey = isNew ? "gmail_connected" : "gmail_updated";
-    return NextResponse.redirect(
+    const response = NextResponse.redirect(
       `${NEXT_PUBLIC_APP_URL}/dashboard/accounts?${paramKey}=true&email=${encodeURIComponent(gmailEmail)}`
     );
+    response.cookies.set("gmail_oauth_state", "", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: 0,
+    });
+    return response;
   } catch (err) {
     console.error("Gmail callback error:", err);
     return NextResponse.redirect(

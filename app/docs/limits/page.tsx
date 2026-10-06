@@ -41,6 +41,19 @@ export default function LimitsPage() {
                 <td className="px-4 py-3 text-secondary">per minute</td>
                 <td className="px-4 py-3 text-secondary">API key</td>
               </tr>
+              <tr className="hover:bg-surface-variant/20 transition-colors">
+                <td className="px-4 py-3 font-mono text-xs text-secondary">
+                  <code>Gmail sender burst</code>
+                </td>
+                <td className="px-4 py-3 font-bold text-primary-sendlib">
+                  1 send/s personal · 2 sends/s Workspace
+                </td>
+                <td className="px-4 py-3 font-bold text-primary-sendlib">
+                  1 send/s personal · 2 sends/s Workspace
+                </td>
+                <td className="px-4 py-3 text-secondary">1-second sliding window</td>
+                <td className="px-4 py-3 text-secondary">Connected Gmail account</td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -49,6 +62,15 @@ export default function LimitsPage() {
           <code className="bg-surface-variant px-1 rounded">429 Too Many Requests</code> with a{" "}
           <code className="bg-surface-variant px-1 rounded">Retry-After</code> header indicating how
           many seconds to wait.
+        </p>
+        <p className="text-xs text-secondary">
+          The per-minute API-key limit and the Gmail sender burst limit are separate. Sendlib waits
+          up to 3 seconds for a Gmail sender slot. If no slot becomes available, the request is
+          recorded as failed and returns{" "}
+          <code className="bg-surface-variant px-1 rounded">429</code> with{" "}
+          <code className="bg-surface-variant px-1 rounded">Retry-After: 1</code>. Clients should
+          serialize sends per connected Gmail account or retry 429 responses after the indicated
+          delay. For larger recipient lists, use <code>/api/batch</code>.
         </p>
       </div>
 
@@ -180,6 +202,14 @@ export default function LimitsPage() {
         <p className="text-xs text-secondary">
           Daily sending quotas are set and enforced directly by Google&apos;s Gmail API. Sendlib
           monitors your send volume and resets your limit tracking daily at UTC midnight.
+        </p>
+        <p className="text-xs text-secondary">
+          A successful Sendlib response means Gmail accepted the message and returned a message ID.
+          It does not guarantee inbox placement: Gmail and the recipient&apos;s mail provider can
+          still place the message in Spam based on sender reputation, message content, links,
+          recipient engagement, and other signals. Use a consistent sender, include useful
+          plain-text content, avoid link-heavy or image-heavy messages, and use an authenticated
+          Google Workspace custom domain when dependable business deliverability is important.
         </p>
       </div>
 

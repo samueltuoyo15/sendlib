@@ -7,6 +7,7 @@ export interface IApiKey extends Document {
   keyPrefix: string;
   revoked: boolean;
   allowedOrigins: string[];
+  senderEmail?: string | null;
   lastUsedAt?: Date;
   createdAt: Date;
 }
@@ -19,6 +20,7 @@ const ApiKeySchema = new Schema<IApiKey>(
     keyPrefix: { type: String, required: true, index: true },
     revoked: { type: Boolean, default: false },
     allowedOrigins: { type: [String], default: [] },
+    senderEmail: { type: String, default: null, lowercase: true, trim: true },
     lastUsedAt: { type: Date },
   },
   { timestamps: true }

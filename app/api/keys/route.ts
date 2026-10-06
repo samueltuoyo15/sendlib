@@ -1,4 +1,5 @@
 import crypto from "crypto";
+import { validateSenderScope } from "@/lib/apiKeyScope";
 import { requireAuthUser } from "@/lib/auth";
 import { connectDB } from "@/lib/db";
 import { getEffectiveUserPlan } from "@/lib/paystack";
@@ -15,7 +16,7 @@ export async function GET(req: NextRequest) {
     await connectDB();
 
     const keys = await ApiKey.find({ userId: new mongoose.Types.ObjectId(user.id) })
-      .select("name keyPrefix revoked allowedOrigins lastUsedAt createdAt")
+      .select("name keyPrefix revoked allowedOrigins senderEmail lastUsedAt createdAt")
       .sort({ createdAt: -1 })
       .lean<IApiKey[]>();
 
@@ -25,6 +26,7 @@ export async function GET(req: NextRequest) {
       keyPrefix: key.keyPrefix,
       revoked: key.revoked,
       allowedOrigins: key.allowedOrigins,
+      senderEmail: key.senderEmail ?? null,
       lastUsedAt: key.lastUsedAt,
       createdAt: key.createdAt,
     }));
@@ -88,6 +90,9 @@ export async function POST(req: NextRequest) {
       .map((o: unknown) => String(o).trim().toLowerCase())
       .filter((o: string) => o.length > 0 && o.length <= 253);
 
+    const senderEmail =
+      body.senderEmail === undefined ? null : await validateSenderScope(user.id, body.senderEmail);
+
     const rawKey = crypto.randomBytes(32).toString("hex");
     const prefix = `sl_${rawKey.substring(0, 8)}`;
     const fullKey = `${prefix}_${rawKey.substring(8)}`;
@@ -99,6 +104,7 @@ export async function POST(req: NextRequest) {
       keyHash,
       keyPrefix: prefix,
       allowedOrigins,
+      senderEmail,
     });
 
     return NextResponse.json(
@@ -111,6 +117,7 @@ export async function POST(req: NextRequest) {
           prefix: apiKey.keyPrefix,
           name: apiKey.name,
           allowedOrigins: apiKey.allowedOrigins,
+          senderEmail: apiKey.senderEmail ?? null,
           createdAt: apiKey.createdAt,
         },
       },

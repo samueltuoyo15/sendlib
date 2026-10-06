@@ -1,5 +1,6 @@
-import { getClientIp, setAuthCookies } from "@/lib/auth";
-import { createSession } from "@/lib/auth/sessions";
+import { getClientIp, setAuthCookies, setPendingAuthCookies } from "@/lib/auth";
+import { PENDING_SESSION_TTL_MS, createSession } from "@/lib/auth/sessions";
+import { isTwoFactorEnabled } from "@/lib/auth/twoFactor";
 import { normalizeEmail } from "@/lib/auth/utils";
 import axios from "@/lib/axios";
 import { connectDB } from "@/lib/db";
@@ -89,15 +90,30 @@ export async function GET(req: NextRequest) {
       await user.save();
     }
 
+    if (user.disabled) {
+      return NextResponse.redirect(`${NEXT_PUBLIC_APP_URL}/login?error=account_disabled`);
+    }
+    const needsTwoFactor = isTwoFactorEnabled(user);
     const { token } = await createSession({
       userId: user._id.toString(),
       userAgent: req.headers.get("user-agent") ?? undefined,
       ip: getClientIp(req),
-      status: "active",
+      status: needsTwoFactor ? "pending" : "active",
+      ttlMs: needsTwoFactor ? PENDING_SESSION_TTL_MS : undefined,
     });
 
-    const response = NextResponse.redirect(`${NEXT_PUBLIC_APP_URL}/dashboard`);
-    setAuthCookies(response, token);
+    const response = NextResponse.redirect(
+      `${NEXT_PUBLIC_APP_URL}${needsTwoFactor ? "/login?twoFactor=1" : "/dashboard"}`
+    );
+    response.cookies.set("oauth_state", "", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: 0,
+    });
+    if (needsTwoFactor) setPendingAuthCookies(response, token);
+    else setAuthCookies(response, token);
     return response;
   } catch (err) {
     console.error("Google OAuth callback error:", err);

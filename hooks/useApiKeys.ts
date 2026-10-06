@@ -7,6 +7,7 @@ export interface ApiKey {
   name: string;
   revoked: boolean;
   allowedOrigins: string[];
+  senderEmail?: string | null;
   lastUsedAt?: string;
   createdAt: string;
 }
@@ -24,7 +25,11 @@ export function useApiKeys() {
 export function useGenerateApiKey() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (params: { name?: string; allowedOrigins?: string[] }) => {
+    mutationFn: async (params: {
+      name?: string;
+      allowedOrigins?: string[];
+      senderEmail?: string | null;
+    }) => {
       const res = await api.post<
         never,
         {
@@ -71,10 +76,11 @@ export function useUpdateApiKey() {
       id,
       allowedOrigins,
       name,
-    }: { id: string; allowedOrigins?: string[]; name?: string }) => {
+      senderEmail,
+    }: { id: string; allowedOrigins?: string[]; name?: string; senderEmail?: string | null }) => {
       const res = await api.patch<never, { success: boolean; message: string; data: ApiKey }>(
         `/keys/${id}`,
-        { allowedOrigins, name }
+        { allowedOrigins, name, senderEmail }
       );
       return res.data;
     },

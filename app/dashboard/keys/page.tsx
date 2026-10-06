@@ -10,6 +10,13 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   type ApiKey,
@@ -47,6 +54,8 @@ function KeysContent() {
   const [newKeyDialog, setNewKeyDialog] = useState<{ key: string; hint: string } | null>(null);
   const [generateDialog, setGenerateDialog] = useState(false);
   const [keyLabel, setKeyLabel] = useState("");
+  const [senderEmail, setSenderEmail] = useState("");
+  const [editSenderEmail, setEditSenderEmail] = useState("");
   const [allowedOriginsText, setAllowedOriginsText] = useState("");
   const [deleteKeyId, setDeleteKeyId] = useState<string | null>(null);
   const [editingKey, setEditingKey] = useState<ApiKey | null>(null);
@@ -104,6 +113,7 @@ function KeysContent() {
     generateKey(
       {
         name: keyLabel || undefined,
+        senderEmail: senderEmail || null,
         allowedOrigins: allowedOrigins.length > 0 ? allowedOrigins : undefined,
       },
       {
@@ -111,6 +121,7 @@ function KeysContent() {
           setNewKeyDialog({ key: data.key, hint: data.prefix });
           setGenerateDialog(false);
           setKeyLabel("");
+          setSenderEmail("");
           setAllowedOriginsText("");
         },
         onError: (err: unknown) => {
@@ -127,6 +138,7 @@ function KeysContent() {
   const handleOpenEdit = (key: ApiKey) => {
     setEditingKey(key);
     setEditKeyLabel(key.name || "");
+    setEditSenderEmail(key.senderEmail || "");
     setEditAllowedOriginsText(
       key.allowedOrigins && key.allowedOrigins.length > 0 ? key.allowedOrigins.join("\n") : ""
     );
@@ -143,6 +155,8 @@ function KeysContent() {
       {
         id: editingKey.id,
         name: editKeyLabel.trim() || undefined,
+        senderEmail:
+          editSenderEmail === (editingKey.senderEmail || "") ? undefined : editSenderEmail || null,
         allowedOrigins,
       },
       {
@@ -162,10 +176,10 @@ function KeysContent() {
   return (
     <div className="space-y-6">
       {!isLoadingAccounts && !hasConnectedAccounts && (
-        <div className="p-4 rounded-xl border border-amber-300 bg-amber-50 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-amber-900 shadow-xs">
+        <div className="p-4 rounded-xl border border-amber-500/30 bg-amber-500/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-amber-200">
           <div>
-            <p className="font-bold text-sm">No Gmail account connected</p>
-            <p className="text-xs text-amber-800 mt-0.5">
+            <p className="font-bold text-sm text-amber-200">No Gmail account connected</p>
+            <p className="text-xs text-amber-300/80 mt-0.5">
               You must connect at least one Gmail account before creating API keys so Sendlib knows
               where to dispatch your emails.
             </p>
@@ -173,7 +187,7 @@ function KeysContent() {
           <Link href="/dashboard/accounts">
             <Button
               size="sm"
-              className="bg-amber-800 hover:bg-amber-900 text-white text-xs font-bold shrink-0"
+              className="bg-amber-500 hover:bg-amber-600 text-black text-xs font-bold shrink-0 border-0 cursor-pointer"
             >
               Connect Gmail Account
             </Button>
@@ -251,7 +265,7 @@ function KeysContent() {
                     Key Prefix
                   </th>
                   <th className="px-6 py-3.5 text-xs font-bold uppercase tracking-wider text-primary-sendlib">
-                    Allowed Origins
+                    Sender / Allowed Origins
                   </th>
                   <th className="px-6 py-3.5 text-xs font-bold uppercase tracking-wider text-primary-sendlib">
                     Status
@@ -317,44 +331,29 @@ function KeysContent() {
                         </code>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="flex items-center gap-2 flex-wrap">
+                        <p className="text-xs font-semibold text-primary-sendlib mb-1">
+                          {key.senderEmail || "All connected accounts"}
+                        </p>
+                        <div className="flex items-center gap-1.5 flex-wrap">
                           {key.allowedOrigins && key.allowedOrigins.length > 0 ? (
-                            <div className="flex flex-wrap gap-1.5 max-w-[280px]">
+                            <div className="flex flex-wrap gap-1 max-w-[280px]">
                               {key.allowedOrigins.map((origin) => (
                                 <code
                                   key={origin}
-                                  className="px-2 py-0.5 rounded bg-surface-container-low font-mono text-[10px] text-secondary border border-outline-variant/40"
+                                  className="px-1.5 py-0.5 rounded bg-surface-container font-mono text-[10px] text-secondary border border-outline-variant/40"
                                 >
                                   {origin}
                                 </code>
                               ))}
                             </div>
                           ) : (
-                            <span className="text-xs text-secondary italic">
-                              Any origin allowed
-                            </span>
-                          )}
-                          {!key.revoked && (
-                            <button
-                              type="button"
-                              onClick={() => handleOpenEdit(key)}
-                              className="text-[11px] text-primary-sendlib/70 hover:text-primary-sendlib hover:underline cursor-pointer inline-flex items-center gap-1 font-medium"
-                              title="Edit allowed origins"
-                            >
-                              <HugeiconsIcon
-                                icon={PencilEdit01Icon}
-                                size={11}
-                                color="currentColor"
-                                strokeWidth={1.5}
-                              />
-                              Edit
-                            </button>
+                            <span className="text-[11px] text-secondary">Any origin allowed</span>
                           )}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         {!key.revoked ? (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-label-xs border border-emerald-200 bg-emerald-50 text-emerald-700">
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-label-xs font-semibold border border-emerald-500/20 bg-emerald-500/10 text-emerald-400">
                             <HugeiconsIcon
                               icon={CheckmarkCircle01Icon}
                               size={12}
@@ -364,7 +363,7 @@ function KeysContent() {
                             Active
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-label-xs border border-destructive/20 bg-destructive/10 text-destructive">
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-label-xs font-semibold border border-destructive/20 bg-destructive/10 text-destructive">
                             <HugeiconsIcon
                               icon={CancelCircleIcon}
                               size={12}
@@ -386,7 +385,7 @@ function KeysContent() {
                               size="icon-xs"
                               className="h-7 w-7 text-secondary hover:text-primary-sendlib hover:bg-surface-container-high rounded-md cursor-pointer"
                               onClick={() => handleOpenEdit(key)}
-                              title="Edit key & allowed origins"
+                              title="Edit key restrictions"
                             >
                               <HugeiconsIcon
                                 icon={PencilEdit01Icon}
@@ -429,14 +428,13 @@ function KeysContent() {
             <DialogTitle className="text-xl font-headline-md font-bold text-primary-sendlib">
               Generate New API Key
             </DialogTitle>
-            <DialogDescription className="text-secondary text-sm mt-1">
-              Give your API key a label to help identify where it is used (e.g. Production Backend,
-              Staging Server).
+            <DialogDescription className="text-secondary text-xs sm:text-sm mt-0.5">
+              Give your API key a label and configure relay restrictions.
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4">
+          <div className="space-y-3.5">
             <div>
-              <label className="text-sm font-label-sm font-semibold text-on-background mb-1.5 block">
+              <label className="text-xs font-label-xs uppercase tracking-wider font-semibold text-secondary mb-1.5 block">
                 Key Label (Optional)
               </label>
               <Input
@@ -444,7 +442,7 @@ function KeysContent() {
                 value={keyLabel}
                 onChange={(e) => setKeyLabel(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleGenerate()}
-                className="h-9 rounded-lg border border-outline-variant bg-surface-container-low px-3 text-sm text-on-background placeholder:text-secondary/70 focus-visible:border-primary-sendlib"
+                className="h-9 rounded-lg border border-outline-variant bg-surface-container-low px-3 text-xs text-on-background placeholder:text-secondary/60 focus-visible:border-primary-sendlib"
               />
               <div className="flex justify-between mt-1 text-[11px]">
                 <span
@@ -462,20 +460,45 @@ function KeysContent() {
               </div>
             </div>
             <div>
-              <label className="text-sm font-label-sm font-semibold text-on-background mb-1.5 block">
+              <label className="text-xs font-label-xs uppercase tracking-wider font-semibold text-secondary mb-1.5 block">
+                Sender account
+              </label>
+              <Select
+                value={senderEmail || "all"}
+                onValueChange={(val) => setSenderEmail(val === "all" ? "" : (val as string))}
+              >
+                <SelectTrigger className="w-full h-9 rounded-lg border border-outline-variant bg-surface-container-low px-3 text-xs text-on-background focus-visible:border-primary-sendlib cursor-pointer">
+                  <SelectValue placeholder="All connected accounts" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All connected accounts</SelectItem>
+                  {senderEmail && !connectedAccounts.some((a) => a.email === senderEmail) && (
+                    <SelectItem value={senderEmail}>{senderEmail} (disconnected)</SelectItem>
+                  )}
+                  {connectedAccounts.map((account) => (
+                    <SelectItem key={account.id} value={account.email}>
+                      {account.email}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-[11px] text-secondary mt-1">
+                Choose an email to restrict this key to sending from that account.
+              </p>
+            </div>
+            <div>
+              <label className="text-xs font-label-xs uppercase tracking-wider font-semibold text-secondary mb-1.5 block">
                 Allowed Origins / Domains (Optional)
               </label>
               <textarea
-                placeholder="e.g.&#10;localhost:3000&#10;myapp.com"
+                placeholder="localhost:3000, myapp.com"
+                rows={2}
                 value={allowedOriginsText}
                 onChange={(e) => setAllowedOriginsText(e.target.value)}
-                className="w-full rounded-lg border border-outline-variant bg-surface-container-low p-2.5 text-sm text-on-background placeholder:text-secondary/70 focus-visible:border-primary-sendlib outline-none min-h-[80px] font-mono placeholder:font-sans leading-relaxed resize-none"
+                className="w-full rounded-lg border border-outline-variant bg-surface-container-low p-2.5 text-xs text-on-background placeholder:text-secondary/60 focus:border-primary-sendlib outline-none min-h-[64px] max-h-[100px] font-mono leading-relaxed resize-none custom-scrollbar"
               />
-              <p className="text-[11px] text-secondary mt-1.5 leading-relaxed">
-                Restrict API requests to specific domains. If your key gets leaked, requests will
-                still be blocked unless they originate from one of these domains. Note: Since origin
-                headers can be spoofed by server-to-server requests, you must still keep your keys
-                secure!
+              <p className="text-[11px] text-secondary mt-1">
+                Comma or newline separated domains to permit for API requests.
               </p>
             </div>
             {atKeyLimit && (
@@ -485,10 +508,10 @@ function KeysContent() {
               </div>
             )}
           </div>
-          <div className="flex flex-row gap-3 pt-2">
+          <div className="flex flex-row gap-3 pt-1">
             <Button
               variant="outline"
-              className="flex-1 rounded-lg font-label-sm border border-outline-variant hover:bg-surface-container-low text-on-background"
+              className="flex-1 rounded-lg font-label-sm border border-outline-variant hover:bg-surface-container-low text-on-background cursor-pointer"
               onClick={() => setGenerateDialog(false)}
             >
               Cancel
@@ -624,23 +647,22 @@ function KeysContent() {
         <DialogContent className="sm:max-w-md">
           <DialogHeader className="mb-0">
             <DialogTitle className="text-xl font-headline-md font-bold text-primary-sendlib">
-              Edit Allowed Origins
+              Edit API Key
             </DialogTitle>
-            <DialogDescription className="text-secondary text-sm mt-1">
-              Update the allowed origins or label for this API key without regenerating your secret
-              key.
+            <DialogDescription className="text-secondary text-xs sm:text-sm mt-0.5">
+              Update the sender, allowed origins or label without regenerating your secret key.
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4">
+          <div className="space-y-3.5">
             <div>
-              <label className="text-sm font-label-sm font-semibold text-on-background mb-1.5 block">
+              <label className="text-xs font-label-xs uppercase tracking-wider font-semibold text-secondary mb-1.5 block">
                 Key Label
               </label>
               <Input
                 placeholder="e.g. Production Backend"
                 value={editKeyLabel}
                 onChange={(e) => setEditKeyLabel(e.target.value)}
-                className="h-9 rounded-lg border border-outline-variant bg-surface-container-low px-3 text-sm text-on-background placeholder:text-secondary/70 focus-visible:border-primary-sendlib"
+                className="h-9 rounded-lg border border-outline-variant bg-surface-container-low px-3 text-xs text-on-background placeholder:text-secondary/60 focus-visible:border-primary-sendlib"
               />
               <div className="flex justify-between mt-1 text-[11px]">
                 <span
@@ -658,25 +680,55 @@ function KeysContent() {
               </div>
             </div>
             <div>
-              <label className="text-sm font-label-sm font-semibold text-on-background mb-1.5 block">
+              <label className="text-xs font-label-xs uppercase tracking-wider font-semibold text-secondary mb-1.5 block">
+                Sender account
+              </label>
+              <Select
+                value={editSenderEmail || "all"}
+                onValueChange={(val) => setEditSenderEmail(val === "all" ? "" : (val as string))}
+              >
+                <SelectTrigger className="w-full h-9 rounded-lg border border-outline-variant bg-surface-container-low px-3 text-xs text-on-background focus-visible:border-primary-sendlib cursor-pointer">
+                  <SelectValue placeholder="All connected accounts" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All connected accounts</SelectItem>
+                  {editSenderEmail &&
+                    !connectedAccounts.some((a) => a.email === editSenderEmail) && (
+                      <SelectItem value={editSenderEmail}>
+                        {editSenderEmail} (disconnected)
+                      </SelectItem>
+                    )}
+                  {connectedAccounts.map((account) => (
+                    <SelectItem key={account.id} value={account.email}>
+                      {account.email}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-[11px] text-secondary mt-1">
+                Choose an email to restrict this key to sending from that account.
+              </p>
+            </div>
+            <div>
+              <label className="text-xs font-label-xs uppercase tracking-wider font-semibold text-secondary mb-1.5 block">
                 Allowed Origins / Domains (Optional)
               </label>
               <textarea
-                placeholder="e.g.&#10;localhost:3000&#10;myapp.com"
+                placeholder="localhost:3000, myapp.com"
+                rows={2}
                 value={editAllowedOriginsText}
                 onChange={(e) => setEditAllowedOriginsText(e.target.value)}
-                className="w-full rounded-lg border border-outline-variant bg-surface-container-low p-2.5 text-sm text-on-background placeholder:text-secondary/70 focus-visible:border-primary-sendlib outline-none min-h-[90px] font-mono placeholder:font-sans leading-relaxed resize-none"
+                className="w-full rounded-lg border border-outline-variant bg-surface-container-low p-2.5 text-xs text-on-background placeholder:text-secondary/60 focus:border-primary-sendlib outline-none min-h-[64px] max-h-[100px] font-mono leading-relaxed resize-none custom-scrollbar"
               />
-              <p className="text-[11px] text-secondary mt-1.5 leading-relaxed">
-                Enter one origin per line or comma-separated. Leave empty to allow any origin to
-                make requests with this key.
+              <p className="text-[11px] text-secondary mt-1">
+                Enter one origin per line or comma-separated. Leave empty to allow any origin.
               </p>
             </div>
           </div>
-          <div className="flex flex-row gap-3 pt-2">
+          <div className="flex flex-row gap-3 pt-1">
             <Button
               variant="outline"
-              className="flex-1 rounded-lg font-label-sm border border-outline-variant hover:bg-surface-container-low text-on-background"
+              className="flex-1 rounded-lg font-label-sm border border-outline-variant hover:bg-surface-container-low text-on-background cursor-pointer"
               onClick={() => setEditingKey(null)}
             >
               Cancel

@@ -2,6 +2,8 @@ import Session from "@/models/Session";
 import User from "@/models/User";
 import { NextRequest, NextResponse } from "next/server";
 import { PENDING_SESSION_TTL_MS, SESSION_TTL_MS, findSessionByToken } from "./auth/sessions";
+import { connectDB } from "./db";
+import { isTrustedBrowserRequest } from "./requestSecurity";
 
 export const SESSION_COOKIE_NAME = "access_token";
 export const MARKER_COOKIE_NAME = "logged_in";
@@ -40,6 +42,7 @@ export async function getAuthUser(req: NextRequest): Promise<AuthUser | null> {
   if (!token) return null;
 
   try {
+    await connectDB();
     const session = await findSessionByToken(token);
     if (!session) return null;
     if (session.status !== "active") return null;
@@ -67,6 +70,16 @@ export async function getAuthUser(req: NextRequest): Promise<AuthUser | null> {
 }
 
 export async function requireAuthUser(req: NextRequest): Promise<AuthUser> {
+  const mutating =
+    !["GET", "HEAD", "OPTIONS"].includes(req.method) ||
+    (req.nextUrl.pathname === "/api/billing/verify" &&
+      (req.nextUrl.searchParams.has("reference") || req.nextUrl.searchParams.has("trxref")));
+  if (mutating && !isTrustedBrowserRequest(req)) {
+    throw new Response(JSON.stringify({ success: false, message: "Untrusted request origin." }), {
+      status: 403,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
   const user = await getAuthUser(req);
   if (!user) {
     throw new Response(JSON.stringify({ success: false, message: "Authentication required" }), {

@@ -1,6 +1,7 @@
 import { connectDB } from "@/lib/db";
 import ApiKey from "@/models/ApiKey";
 import BatchJob from "@/models/BatchJob";
+import User from "@/models/User";
 import argon2 from "argon2";
 import mongoose from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
@@ -41,6 +42,14 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       return NextResponse.json(
         { success: false, message: "Invalid or revoked API key." },
         { status: 401 }
+      );
+    }
+
+    const user = await User.findById(authenticatedUserId).select("disabled").lean();
+    if (!user || user.disabled) {
+      return NextResponse.json(
+        { success: false, message: "User account is unavailable." },
+        { status: 403 }
       );
     }
 

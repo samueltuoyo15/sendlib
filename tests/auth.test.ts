@@ -5,8 +5,8 @@ import {
   generateRecoveryCodes,
   verifyRecoveryCode,
 } from "@/lib/auth/twoFactor";
-import { IUser } from "@/models/User";
 import { hashToken } from "@/lib/auth/utils";
+import User, { IUser } from "@/models/User";
 import { NextResponse } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -43,6 +43,7 @@ describe("2FA recovery codes", () => {
     const rawCode = "0123-4567-89AB-CDEF";
     const hashedCode = hashToken("0123456789ABCDEF");
     const save = vi.fn().mockResolvedValue(undefined);
+    const update = vi.spyOn(User, "updateOne").mockResolvedValue({ modifiedCount: 1 } as never);
     const user = {
       twoFactor: {
         recoveryCodes: [{ hash: hashedCode }],
@@ -51,9 +52,11 @@ describe("2FA recovery codes", () => {
     } as unknown as IUser;
 
     await expect(verifyRecoveryCode(user, rawCode)).resolves.toBe(true);
-    expect(user.twoFactor!.recoveryCodes[0].usedAt).toBeInstanceOf(Date);
+    expect(user.twoFactor!.recoveryCodes![0].usedAt).toBeInstanceOf(Date);
     await expect(verifyRecoveryCode(user, rawCode)).resolves.toBe(false);
-    expect(save).toHaveBeenCalledTimes(1);
+    expect(update).toHaveBeenCalledTimes(1);
+    expect(save).not.toHaveBeenCalled();
+    update.mockRestore();
   });
 });
 

@@ -1,3 +1,4 @@
+import { validateSenderScope } from "@/lib/apiKeyScope";
 import { requireAuthUser } from "@/lib/auth";
 import { connectDB } from "@/lib/db";
 import ApiKey from "@/models/ApiKey";
@@ -52,7 +53,12 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       return NextResponse.json({ success: false, message: "API key not found" }, { status: 404 });
     }
 
-    let body: { revoked?: boolean; name?: string; allowedOrigins?: string[] } = {};
+    let body: {
+      revoked?: boolean;
+      name?: string;
+      allowedOrigins?: string[];
+      senderEmail?: string | null;
+    } = {};
     try {
       body = await req.json();
     } catch {
@@ -60,7 +66,12 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     }
 
     // Handle revocation if explicitly requested or if no other update fields are present
-    if (body.revoked === true || (body.name === undefined && body.allowedOrigins === undefined)) {
+    if (
+      body.revoked === true ||
+      (body.name === undefined &&
+        body.allowedOrigins === undefined &&
+        body.senderEmail === undefined)
+    ) {
       key.revoked = true;
       await key.save();
       return NextResponse.json({ success: true, message: "API key revoked" });
@@ -71,6 +82,10 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
         { success: false, message: "Cannot edit a revoked API key" },
         { status: 400 }
       );
+    }
+
+    if (body.senderEmail !== undefined) {
+      key.senderEmail = await validateSenderScope(user.id, body.senderEmail);
     }
 
     if (body.name !== undefined) {
@@ -105,6 +120,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
         keyPrefix: key.keyPrefix,
         revoked: key.revoked,
         allowedOrigins: key.allowedOrigins,
+        senderEmail: key.senderEmail ?? null,
         lastUsedAt: key.lastUsedAt,
         createdAt: key.createdAt,
       },

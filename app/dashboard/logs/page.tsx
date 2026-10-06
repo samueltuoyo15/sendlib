@@ -248,8 +248,8 @@ export default function LogsPage() {
                     <Badge
                       variant={log.status === "sent" ? "outline" : "secondary"}
                       className={`
-                        font-semibold rounded-md tracking-wider text-[10px] border-border
-                        ${log.status === "failed" ? "bg-destructive/10 text-destructive border-transparent" : "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20"}
+                        font-semibold rounded-md tracking-wider text-[10px]
+                        ${log.status === "failed" ? "bg-destructive/10 text-destructive border-destructive/20" : "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"}
                       `}
                     >
                       {log.status === "sent" && (
@@ -340,8 +340,8 @@ export default function LogsPage() {
                 <Badge
                   variant={selectedLog.status === "sent" ? "outline" : "secondary"}
                   className={`
-                    font-semibold rounded-md tracking-wider text-[10px] border-border py-1 px-2.5
-                    ${selectedLog.status === "failed" ? "bg-destructive/10 text-destructive border-transparent" : "bg-emerald-50 text-emerald-700 border-emerald-200"}
+                    font-semibold rounded-md tracking-wider text-[10px] py-1 px-2.5
+                    ${selectedLog.status === "failed" ? "bg-destructive/10 text-destructive border-destructive/20" : "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"}
                   `}
                 >
                   {selectedLog.status === "sent" && (
@@ -429,11 +429,11 @@ export default function LogsPage() {
                 </h4>
 
                 {selectedLog.status === "sent" ? (
-                  <div className="p-4 rounded-xl border border-indigo-100 bg-indigo-50/20 space-y-1.5">
-                    <span className="text-xs font-semibold text-indigo-700 block">
+                  <div className="p-4 rounded-xl border border-outline-variant bg-surface-container-low space-y-1.5">
+                    <span className="text-xs font-semibold text-secondary block">
                       Upstream Message ID
                     </span>
-                    <code className="text-xs font-mono text-indigo-900 bg-indigo-50/50 p-2 rounded border border-indigo-100/50 block break-all select-all">
+                    <code className="text-xs font-mono text-primary-sendlib bg-surface-container p-2 rounded border border-outline-variant/60 block break-all select-all">
                       {selectedLog.messageId || "-"}
                     </code>
                   </div>

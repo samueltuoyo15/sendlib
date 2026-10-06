@@ -1,7 +1,10 @@
+import { isOriginAllowed } from "@/lib/apiKeyOrigins";
+import { assertSenderScope, senderEmailAddress } from "@/lib/apiKeyScope";
 import { enqueueBatchJob } from "@/lib/batchWorker";
 import { connectDB } from "@/lib/db";
 import { getEffectiveUserPlan } from "@/lib/paystack";
 import { rateLimit } from "@/lib/rateLimit";
+import { readJsonBody } from "@/lib/requestBody";
 import ApiKey, { IApiKey } from "@/models/ApiKey";
 import BatchJob from "@/models/BatchJob";
 import EmailLog from "@/models/EmailLog";
@@ -31,7 +34,7 @@ const RecipientSchema = z.object({
 const BatchRequestSchema = z.object({
   from: z.string().min(1, "The 'from' field is required."),
   subject: z.string().min(1, "The 'subject' field is required.").max(MAX_SUBJECT_LENGTH),
-  recipients: z.array(RecipientSchema).min(1, "At least one recipient is required."),
+  recipients: z.array(RecipientSchema).min(1, "At least one recipient is required.").max(5000),
   html: z.string().optional(),
   text: z.string().optional(),
   replyTo: z.string().email().optional(),
@@ -88,11 +91,19 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { userId, apiKeyId } = auth;
+    const { userId, apiKeyId, matchedKey } = auth;
+    if (
+      !isOriginAllowed(
+        req.headers.get("origin") || req.headers.get("referer"),
+        matchedKey.allowedOrigins
+      )
+    ) {
+      return NextResponse.json({ success: false, message: "Origin not allowed." }, { status: 403 });
+    }
 
     // Load user and enforce Pro-only
     const user = await User.findById(userId).lean();
-    if (!user) {
+    if (!user || user.disabled) {
       return NextResponse.json(
         { success: false, message: "User account not found." },
         { status: 404 }
@@ -130,8 +141,9 @@ export async function POST(req: NextRequest) {
     // Parse and validate body
     let body: unknown;
     try {
-      body = await req.json();
-    } catch {
+      body = await readJsonBody(req, 8 * 1024 * 1024);
+    } catch (err) {
+      if (err instanceof Response) return err;
       return NextResponse.json({ success: false, message: "Invalid JSON body." }, { status: 400 });
     }
 
@@ -148,8 +160,15 @@ export async function POST(req: NextRequest) {
     const { from, subject, recipients, html, text, replyTo } = parsed.data;
 
     // Extract raw email from "Display Name <email>" format if needed
-    const fromEmailMatch = from.match(/<([^>]+)>/) ?? null;
-    const fromEmail = fromEmailMatch ? fromEmailMatch[1].trim() : from.trim();
+    try {
+      assertSenderScope(matchedKey.senderEmail, from);
+    } catch {
+      return NextResponse.json(
+        { success: false, message: "API key sender scope does not permit this email account." },
+        { status: 403 }
+      );
+    }
+    const fromEmail = senderEmailAddress(from);
 
     // Synchronous validation: ensure the Gmail account exists and is connected
     const account = await GmailAccount.findOne({ userId, gmailEmail: fromEmail });

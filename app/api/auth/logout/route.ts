@@ -18,6 +18,9 @@ export async function POST(req: NextRequest) {
   return clearAuthCookies(response);
 }
 
-export async function GET(req: NextRequest) {
-  return POST(req);
+export async function GET() {
+  return NextResponse.json(
+    { success: false, message: "Use POST to log out." },
+    { status: 405, headers: { Allow: "POST" } }
+  );
 }

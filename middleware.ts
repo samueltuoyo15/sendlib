@@ -1,4 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
+import { isTrustedBrowserRequest } from "./lib/requestSecurity";
 
 /**
  * Page-level guard for the dashboard shell. Full session validation still
@@ -8,6 +9,28 @@ import { type NextRequest, NextResponse } from "next/server";
  */
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  if (pathname.startsWith("/api/")) {
+    const keyEndpoint =
+      pathname === "/api/send" || pathname === "/api/batch" || pathname.startsWith("/api/batch/");
+    const mutating =
+      !["GET", "HEAD", "OPTIONS"].includes(request.method) ||
+      (pathname === "/api/billing/verify" &&
+        (request.nextUrl.searchParams.has("reference") ||
+          request.nextUrl.searchParams.has("trxref")));
+    if (
+      mutating &&
+      !keyEndpoint &&
+      pathname !== "/api/billing/webhook" &&
+      !isTrustedBrowserRequest(request)
+    ) {
+      return NextResponse.json(
+        { success: false, message: "Untrusted request origin." },
+        { status: 403 }
+      );
+    }
+    return NextResponse.next();
+  }
 
   const sessionToken = request.cookies.get("access_token")?.value;
   const marker = request.cookies.get("logged_in")?.value;
@@ -22,5 +45,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*"],
+  matcher: ["/dashboard/:path*", "/api/:path*"],
 };

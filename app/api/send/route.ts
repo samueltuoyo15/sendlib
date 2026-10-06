@@ -1,8 +1,11 @@
+import { isOriginAllowed } from "@/lib/apiKeyOrigins";
+import { assertSenderScope } from "@/lib/apiKeyScope";
 import { connectDB } from "@/lib/db";
 import { type DebugStep, analyzeHtmlIssues } from "@/lib/emailDebugger";
-import { sendGmailEmail } from "@/lib/gmail";
+import { GmailBurstLimitError, sendGmailEmail } from "@/lib/gmail";
 import { getEffectiveUserPlan } from "@/lib/paystack";
 import { rateLimit } from "@/lib/rateLimit";
+import { readJsonBody } from "@/lib/requestBody";
 import { interpolate, isValidSlug } from "@/lib/templates";
 import ApiKey, { IApiKey } from "@/models/ApiKey";
 import EmailTemplate from "@/models/EmailTemplate";
@@ -30,20 +33,6 @@ const PLAN_LIMITS = {
     maxAttachmentBytes: 10 * 1024 * 1024,
   },
 };
-
-function isOriginAllowed(origin: string | null, allowed: string[]): boolean {
-  if (!allowed || allowed.length === 0) return true;
-  if (!origin) return false;
-
-  let cleanOrigin = origin.toLowerCase().trim();
-  cleanOrigin = cleanOrigin.replace(/^(https?:\/\/)/, "").split("/")[0];
-
-  for (const pattern of allowed) {
-    const cleanPattern = pattern.replace(/^(https?:\/\/)/, "").split("/")[0];
-    if (cleanPattern === cleanOrigin) return true;
-  }
-  return false;
-}
 
 function toArray(v: unknown): string[] {
   if (Array.isArray(v)) return v.map(String);
@@ -103,7 +92,7 @@ export async function POST(req: NextRequest) {
     }
 
     const user = await User.findById(authenticatedUserId).lean();
-    if (!user) {
+    if (!user || user.disabled) {
       return NextResponse.json(
         { success: false, message: "User account not found." },
         { status: 404 }
@@ -150,7 +139,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const body = await req.json();
+    const body = await readJsonBody(req, 40 * 1024 * 1024);
     const {
       to: rawTo,
       subject: rawSubject,
@@ -267,6 +256,9 @@ export async function POST(req: NextRequest) {
         detail: "No template variables to fill.",
       });
     }
+
+    if (!from && matchedKey?.senderEmail) from = matchedKey.senderEmail;
+    if (from) assertSenderScope(matchedKey?.senderEmail, from);
 
     if (!from) {
       const firstAccount = await GmailAccount.findOne({
@@ -479,12 +471,17 @@ export async function POST(req: NextRequest) {
       }
     );
   } catch (err) {
+    if (err instanceof Response) return err;
     const errMsg = err instanceof Error ? err.message : "Failed to send email";
     console.error("/api/send error:", err);
 
     let status = 400;
+    const errorHeaders: Record<string, string> = {};
     const lower = errMsg.toLowerCase();
-    if (lower.includes("limit reached")) {
+    if (err instanceof GmailBurstLimitError) {
+      status = 429;
+      errorHeaders["Retry-After"] = String(err.retryAfterSeconds);
+    } else if (lower.includes("limit reached")) {
       status = 429;
     } else if (
       lower.includes("disconnected") ||
@@ -497,6 +494,9 @@ export async function POST(req: NextRequest) {
       status = 403;
     }
 
-    return NextResponse.json({ success: false, message: errMsg }, { status });
+    return NextResponse.json(
+      { success: false, message: errMsg },
+      { status, headers: errorHeaders }
+    );
   }
 }
