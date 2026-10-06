@@ -52,7 +52,7 @@ importers:
         version: 8.24.1(socks@2.8.10)(supports-color@7.2.0)
       next:
         specifier: 16.3.8
-        version: 16.3.8(@babel/core@7.29.7(supports-color@7.2.0))(@types/node@26.5.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+        version: 16.3.8(@babel/core@7.29.7(supports-color@7.2.0))(@types/node@26.6.4)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       nodemailer:
         specifier: 10.0.13
         version: 10.0.13
@@ -95,7 +95,7 @@ importers:
         version: 9.0.10
       '@types/node':
         specifier: ^26
-        version: 26.5.1
+        version: 26.6.4
       '@types/nodemailer':
         specifier: ^7.0.10
         version: 7.0.12
@@ -110,13 +110,13 @@ importers:
         version: 19.2.3(@types/react@19.2.17)
       next-sitemap:
         specifier: ^4.2.3
-        version: 4.2.3(next@16.3.8(@babel/core@7.29.7(supports-color@7.2.0))(@types/node@26.5.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))
+        version: 4.2.3(next@16.3.8(@babel/core@7.29.7(supports-color@7.2.0))(@types/node@26.6.4)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))
       shadcn:
         specifier: ^4.21.1
         version: 4.21.1(supports-color@7.2.0)(typescript@5.9.3)
       sharp:
         specifier: ^0.35.3
-        version: 0.35.3(@types/node@26.5.1)
+        version: 0.35.3(@types/node@26.6.4)
       tailwindcss:
         specifier: ^4
         version: 4.3.1
@@ -125,10 +125,10 @@ importers:
         version: 5.9.3
       vite:
         specifier: ^8.3.2
-        version: 8.3.2(@types/node@26.5.1)(jiti@2.7.0)
+        version: 8.3.2(@types/node@26.6.4)(jiti@2.7.0)
       vitest:
         specifier: ^5.0.0
-        version: 5.0.0(@types/node@26.5.1)(vite@8.3.2(@types/node@26.5.1)(jiti@2.7.0))
+        version: 5.0.0(@types/node@26.6.4)(vite@8.3.2(@types/node@26.6.4)(jiti@2.7.0))
 
 packages:
 
@@ -1240,8 +1240,8 @@ packages:
   '@types/ms@2.1.0':
     resolution: {integrity: sha512-GsCCIZDE/p3i96vtEqx+7dBUGXrc7zeSK3wwPHIaRThS+9OhWIXRqzs4d6k1SVU8g91DrNRWxWUGhp5KXQb2VA==}
 
-  '@types/node@26.5.1':
-    resolution: {integrity: sha512-CzNm2FezW4VR/LjG6yUdiEgLE/rAQ9Slj5gCu/C2VrdcW7I0ahNZ8DRbHT7zOZ6r3ONgd/bsQIeSaoDGrd1C6g==}
+  '@types/node@26.6.4':
+    resolution: {integrity: sha512-ldVPDCzj7fsaGZrLB0NuHuTvJcsNasysBAqMolr/cgxrLd1xbqxIr3XJiPnHHJUCxj5sNF1vnRj9aWnrVh5Jcg==}
 
   '@types/nodemailer@7.0.12':
     resolution: {integrity: sha512-80vKwiIsVSyFA1rRovH59jNPLBOuc6dRZIHEu40gXTkBkZnQv8vog1xSGEb9j5q/tdMAs5ivvDR2pLTU0hGHXA==}
@@ -4175,21 +4175,21 @@ snapshots:
   '@types/jsonwebtoken@9.0.10':
     dependencies:
       '@types/ms': 2.1.0
-      '@types/node': 26.5.1
+      '@types/node': 26.6.4
 
   '@types/ms@2.1.0': {}
 
-  '@types/node@26.5.1':
+  '@types/node@26.6.4':
     dependencies:
       undici-types: 8.9.0
 
   '@types/nodemailer@7.0.12':
     dependencies:
-      '@types/node': 26.5.1
+      '@types/node': 26.6.4
 
   '@types/qrcode@1.5.6':
     dependencies:
-      '@types/node': 26.5.1
+      '@types/node': 26.6.4
 
   '@types/react-dom@19.2.3(@types/react@19.2.17)':
     dependencies:
@@ -4207,14 +4207,14 @@ snapshots:
     dependencies:
       '@types/webidl-conversions': 7.0.3
 
-  '@vitest/mocker@5.0.0(vite@8.3.2(@types/node@26.5.1)(jiti@2.7.0))':
+  '@vitest/mocker@5.0.0(vite@8.3.2(@types/node@26.6.4)(jiti@2.7.0))':
     dependencies:
       '@jridgewell/trace-mapping': 0.3.31
       '@vitest/spy': 5.0.0
       estree-walker: 3.0.3
       magic-string: 1.3.1
     optionalDependencies:
-      vite: 8.3.2(@types/node@26.5.1)(jiti@2.7.0)
+      vite: 8.3.2(@types/node@26.6.4)(jiti@2.7.0)
 
   '@vitest/spy@5.0.0': {}
 
@@ -5195,15 +5195,15 @@ snapshots:
 
   negotiator@1.0.0: {}
 
-  next-sitemap@4.2.3(next@16.3.8(@babel/core@7.29.7(supports-color@7.2.0))(@types/node@26.5.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)):
+  next-sitemap@4.2.3(next@16.3.8(@babel/core@7.29.7(supports-color@7.2.0))(@types/node@26.6.4)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)):
     dependencies:
       '@corex/deepmerge': 4.0.43
       '@next/env': 13.5.11
       fast-glob: 3.3.3
       minimist: 1.2.8
-      next: 16.3.8(@babel/core@7.29.7(supports-color@7.2.0))(@types/node@26.5.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+      next: 16.3.8(@babel/core@7.29.7(supports-color@7.2.0))(@types/node@26.6.4)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
 
-  next@16.3.8(@babel/core@7.29.7(supports-color@7.2.0))(@types/node@26.5.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0):
+  next@16.3.8(@babel/core@7.29.7(supports-color@7.2.0))(@types/node@26.6.4)(react-dom@19.3.0(react@19.3.0))(react@19.3.0):
     dependencies:
       '@next/env': 16.3.8
       '@swc/helpers': 0.5.23
@@ -5222,7 +5222,7 @@ snapshots:
       '@next/swc-linux-x64-musl': 16.3.8
       '@next/swc-win32-arm64-msvc': 16.3.8
       '@next/swc-win32-x64-msvc': 16.3.8
-      sharp: 0.35.5(@types/node@26.5.1)
+      sharp: 0.35.5(@types/node@26.6.4)
     transitivePeerDependencies:
       - '@babel/core'
       - '@types/node'
@@ -5614,7 +5614,7 @@ snapshots:
       - supports-color
       - typescript
 
-  sharp@0.35.3(@types/node@26.5.1):
+  sharp@0.35.3(@types/node@26.6.4):
     dependencies:
       '@img/colour': 1.1.0
       detect-libc: 2.1.2
@@ -5645,9 +5645,9 @@ snapshots:
       '@img/sharp-win32-arm64': 0.35.3
       '@img/sharp-win32-ia32': 0.35.3
       '@img/sharp-win32-x64': 0.35.3
-      '@types/node': 26.5.1
+      '@types/node': 26.6.4
 
-  sharp@0.35.5(@types/node@26.5.1):
+  sharp@0.35.5(@types/node@26.6.4):
     dependencies:
       '@img/colour': 1.1.0
       detect-libc: 2.1.2
@@ -5678,7 +5678,7 @@ snapshots:
       '@img/sharp-win32-arm64': 0.35.5
       '@img/sharp-win32-ia32': 0.35.5
       '@img/sharp-win32-x64': 0.35.5
-      '@types/node': 26.5.1
+      '@types/node': 26.6.4
     optional: true
 
   shebang-command@2.0.0:
@@ -5896,7 +5896,7 @@ snapshots:
 
   vary@1.1.2: {}
 
-  vite@8.3.2(@types/node@26.5.1)(jiti@2.7.0):
+  vite@8.3.2(@types/node@26.6.4)(jiti@2.7.0):
     dependencies:
       lightningcss: 1.33.0
       picomatch: 4.0.7
@@ -5904,14 +5904,14 @@ snapshots:
       rolldown: 1.2.12
       tinyglobby: 0.2.17
     optionalDependencies:
-      '@types/node': 26.5.1
+      '@types/node': 26.6.4
       fsevents: 2.3.3
       jiti: 2.7.0
 
-  vitest@5.0.0(@types/node@26.5.1)(vite@8.3.2(@types/node@26.5.1)(jiti@2.7.0)):
+  vitest@5.0.0(@types/node@26.6.4)(vite@8.3.2(@types/node@26.6.4)(jiti@2.7.0)):
     dependencies:
       '@types/chai': 5.2.3
-      '@vitest/mocker': 5.0.0(vite@8.3.2(@types/node@26.5.1)(jiti@2.7.0))
+      '@vitest/mocker': 5.0.0(vite@8.3.2(@types/node@26.6.4)(jiti@2.7.0))
       chai: 6.2.2
       es-module-lexer: 2.3.2
       expect-type: 1.4.0
@@ -5922,10 +5922,10 @@ snapshots:
       tinybench: 6.1.4
       tinyexec: 1.3.0
       tinyglobby: 0.2.17
-      vite: 8.3.2(@types/node@26.5.1)(jiti@2.7.0)
+      vite: 8.3.2(@types/node@26.6.4)(jiti@2.7.0)
       why-is-node-running: 2.3.0
     optionalDependencies:
-      '@types/node': 26.5.1
+      '@types/node': 26.6.4
     transitivePeerDependencies:
       - msw
 
