@@ -49,7 +49,7 @@
     "@types/react-dom": "^19",
     "next-sitemap": "^4.2.3",
     "shadcn": "^4.21.1",
-    "sharp": "^0.35.3",
+    "sharp": "^0.35.5",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vite": "^8.3.2",
