@@ -1,7 +1,7 @@
 const https = require("https");
 
 const API_KEY = "afsdfsfafsfs";
-const FROM = '';
+const FROM = "";
 const BASE_URL = "sendlib.samueltuoyo.com";
 
 const AFFECTED_USERS = [];

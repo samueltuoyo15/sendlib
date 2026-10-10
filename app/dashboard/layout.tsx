@@ -97,7 +97,7 @@ export default function DashboardLayout({
         <div className="h-16 flex items-center px-6 mt-2">
           <Link href="/" className="flex items-center gap-2 transition-opacity">
             <span className="text-xl font-headline-md font-bold tracking-tight text-primary-sendlib">
-              Sendlib
+              Sendliberty
             </span>
           </Link>
         </div>
@@ -159,7 +159,7 @@ export default function DashboardLayout({
 
               <Link href="/" className="lg:hidden flex items-center gap-2 transition-opacity">
                 <span className="text-lg font-headline-md font-bold tracking-tight text-primary-sendlib">
-                  Sendlib
+                  Sendliberty
                 </span>
               </Link>
             </div>
@@ -282,7 +282,7 @@ export default function DashboardLayout({
               href="/"
               className="text-lg font-headline-md font-bold tracking-tight text-primary-sendlib hover:opacity-80 transition-opacity cursor-pointer"
             >
-              Sendlib
+              Sendliberty
             </Link>
           </div>
 
@@ -346,7 +346,7 @@ export default function DashboardLayout({
               Sign Out
             </DialogTitle>
             <DialogDescription className="text-secondary text-sm leading-relaxed mt-1">
-              Are you sure you want to sign out of your Sendlib account? You will need to log in
+              Are you sure you want to sign out of your Sendliberty account? You will need to log in
               again to access your dashboard.
             </DialogDescription>
           </DialogHeader>

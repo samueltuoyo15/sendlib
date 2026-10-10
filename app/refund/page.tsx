@@ -3,10 +3,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Refund Policy | Sendlib",
-  description: "Sendlib Refund Policy",
+  title: "Refund Policy | Sendliberty",
+  description: "Sendliberty Refund Policy",
   alternates: {
-    canonical: "https://sendlib.samueltuoyo.com/refund",
+    canonical: "https://sendliberty.com/refund",
   },
 };
 
@@ -38,8 +38,8 @@ export default function RefundPolicy() {
             </p>
             <p>
               We highly encourage all users to fully utilize our Free plan to test the API, explore
-              the dashboard, and ensure Sendlib meets your requirements before upgrading to the Pro
-              plan.
+              the dashboard, and ensure Sendliberty meets your requirements before upgrading to the
+              Pro plan.
             </p>
           </section>
 
@@ -48,7 +48,7 @@ export default function RefundPolicy() {
               2. Subscription Renewals & Cancellations
             </h2>
             <p>
-              Sendlib operates on an auto-renewing subscription model. You will be billed
+              Sendliberty operates on an auto-renewing subscription model. You will be billed
               automatically at the start of each billing cycle.
             </p>
             <p>
@@ -79,7 +79,7 @@ export default function RefundPolicy() {
             </h2>
             <p>
               If your account is terminated or suspended due to a violation of our Terms of Service
-              (e.g., using Sendlib to send spam or malicious content), your subscription will be
+              (e.g., using Sendliberty to send spam or malicious content), your subscription will be
               canceled immediately, and you will not be eligible for a refund.
             </p>
           </section>

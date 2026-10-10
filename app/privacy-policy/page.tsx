@@ -3,11 +3,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | Sendlib",
+  title: "Privacy Policy | Sendliberty",
   description:
-    "Sendlib Privacy Policy and Google API Services User Data Policy compliance details.",
+    "Sendliberty Privacy Policy and Google API Services User Data Policy compliance details.",
   alternates: {
-    canonical: "https://sendlib.samueltuoyo.com/privacy-policy",
+    canonical: "https://sendliberty.com/privacy-policy",
   },
 };
 
@@ -55,7 +55,7 @@ export default function PrivacyPage() {
               3. Email Data Privacy
             </h2>
             <p>
-              Sendlib acts as a proxy. We do <strong>not</strong> permanently store the content
+              Sendliberty acts as a proxy. We do <strong>not</strong> permanently store the content
               (body) of the emails you send through our API. We only process the payload in memory
               long enough to deliver it to the respective upstream provider (e.g., Google Gmail
               API). We log metadata (timestamps, recipient address, subject line, success/failure
@@ -68,19 +68,19 @@ export default function PrivacyPage() {
               4. Google User Data
             </h2>
             <p>
-              When you connect a Gmail account, Sendlib requests the <code>gmail.send</code> OAuth
-              scope, which allows us to send emails on your behalf. We do <strong>not</strong> read,
-              index, or store the content of any emails in your Gmail inbox. The only Gmail data we
-              access is your Gmail address (to identify the connected account) and the OAuth access
-              and refresh tokens required to send emails on your behalf.
+              When you connect a Gmail account, Sendliberty requests the <code>gmail.send</code>{" "}
+              OAuth scope, which allows us to send emails on your behalf. We do <strong>not</strong>{" "}
+              read, index, or store the content of any emails in your Gmail inbox. The only Gmail
+              data we access is your Gmail address (to identify the connected account) and the OAuth
+              access and refresh tokens required to send emails on your behalf.
             </p>
             <p>
               Your OAuth access and refresh tokens are encrypted at rest using AES-256 encryption
               and are never exposed or shared with third parties.
             </p>
             <p>
-              Sendlib&apos;s use and transfer to any other app of information received from Google
-              APIs will adhere to the{" "}
+              Sendliberty&apos;s use and transfer to any other app of information received from
+              Google APIs will adhere to the{" "}
               <a
                 href="https://developers.google.com/terms/api-services-user-data-policy"
                 target="_blank"
@@ -106,7 +106,7 @@ export default function PrivacyPage() {
               <li>
                 <strong>Connected Gmail account credentials</strong> (encrypted OAuth tokens, Gmail
                 address): Retained indefinitely until you disconnect the Gmail account from your
-                dashboard or delete your Sendlib account.
+                dashboard or delete your Sendliberty account.
               </li>
               <li>
                 <strong>Email send logs</strong> (recipient address, subject line, send status,
@@ -120,7 +120,7 @@ export default function PrivacyPage() {
             </ul>
             <p>
               We do <strong>not</strong> retain the body/content of any emails you send through
-              Sendlib.
+              Sendliberty.
             </p>
           </section>
 
@@ -129,8 +129,8 @@ export default function PrivacyPage() {
               6. Data Deletion
             </h2>
             <p>
-              You can delete your Sendlib account and all associated data at any time directly from
-              your dashboard:
+              You can delete your Sendliberty account and all associated data at any time directly
+              from your dashboard:
             </p>
             <ol className="list-decimal list-inside space-y-1 pl-2">
               <li>
@@ -148,7 +148,7 @@ export default function PrivacyPage() {
               from our systems:
             </p>
             <ul className="list-disc list-inside space-y-1 pl-2">
-              <li>Your Sendlib user profile</li>
+              <li>Your Sendliberty user profile</li>
               <li>All connected Gmail account credentials (OAuth tokens)</li>
               <li>All email send logs</li>
               <li>All API keys</li>

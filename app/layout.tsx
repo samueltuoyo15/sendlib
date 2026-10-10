@@ -15,7 +15,7 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 export const metadata: Metadata = {
   metadataBase: new URL(siteMetadata.siteUrl),
   title: {
-    template: `%s | Sendlib`,
+    template: `%s | Sendliberty`,
     default: siteMetadata.title,
   },
   description: siteMetadata.description,
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     title: siteMetadata.title,
     description: siteMetadata.description,
     url: siteMetadata.siteUrl,
-    siteName: "Sendlib",
+    siteName: "Sendliberty",
     locale: "en_US",
     type: "website",
   },

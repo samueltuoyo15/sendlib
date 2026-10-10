@@ -35,7 +35,7 @@ export default function TopNavBar() {
       <nav className="flex justify-between items-center px-margin-mobile md:px-margin-desktop py-md max-w-7xl mx-auto">
         <Link href="/" className="flex items-center gap-2 transition-colors duration-300">
           <span className="text-xl font-headline-md font-bold tracking-tight text-white">
-            Sendlib
+            Sendliberty
           </span>
         </Link>
         <div className="hidden md:flex items-center gap-xl">
@@ -70,7 +70,7 @@ export default function TopNavBar() {
             Contact
           </a>
           <a
-            href="https://github.com/samueltuoyo15/sendlib"
+            href="https://github.com/samueltuoyo15/sendliberty"
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-1.5 font-body-md text-body-md text-white/80 hover:text-white transition-colors duration-300"
@@ -81,7 +81,7 @@ export default function TopNavBar() {
         </div>
         <div className="flex items-center gap-md">
           <a
-            href="https://github.com/samueltuoyo15/sendlib"
+            href="https://github.com/samueltuoyo15/sendliberty"
             target="_blank"
             rel="noopener noreferrer"
             className="md:hidden flex items-center p-2 text-white/80 hover:text-white transition-colors"

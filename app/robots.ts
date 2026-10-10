@@ -9,6 +9,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/api/", "/dashboard/", "/login"],
       },
     ],
-    sitemap: "https://sendlib.samueltuoyo.com/sitemap.xml",
+    sitemap: "https://sendliberty.com/sitemap.xml",
   };
 }

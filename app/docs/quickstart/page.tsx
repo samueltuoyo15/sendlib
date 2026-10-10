@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 
 export default function QuickstartPage() {
   const [apiUrl] = useState(() =>
-    typeof window !== "undefined" ? window.location.origin : "https://sendlib.samueltuoyo.com"
+    typeof window !== "undefined" ? window.location.origin : "https://sendliberty.com"
   );
 
   return (
@@ -14,7 +14,7 @@ export default function QuickstartPage() {
       <div className="mb-10">
         <h1 className="text-3xl font-bold tracking-tight text-primary-sendlib mb-4">Quick Start</h1>
         <p className="text-secondary text-lg leading-relaxed">
-          Get up and running with Sendlib in under 5 minutes.
+          Get up and running with Sendliberty in under 5 minutes.
         </p>
       </div>
 
@@ -77,8 +77,8 @@ export default function QuickstartPage() {
   -d '{
     "from": "sender@gmail.com",
     "to": "recipient@example.com",
-    "subject": "Welcome to Sendlib!",
-    "html": "<p>This email was sent via Sendlib REST API.</p>"
+    "subject": "Welcome to Sendliberty!",
+    "html": "<p>This email was sent via Sendliberty REST API.</p>"
   }'`}
           </pre>
         </div>

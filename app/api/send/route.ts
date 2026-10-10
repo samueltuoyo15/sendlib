@@ -132,7 +132,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json(
           {
             success: false,
-            message: `Origin not allowed: '${clientOrigin || "unknown"}' is not in this API key's allowed origins list. Update it in your Sendlib dashboard under API Keys.`,
+            message: `Origin not allowed: '${clientOrigin || "unknown"}' is not in this API key's allowed origins list. Update it in your Sendliberty dashboard under API Keys.`,
           },
           { status: 403 }
         );

@@ -1,5 +1,5 @@
 const config = {
-  siteUrl: "https://sendlib.samueltuoyo.com",
+  siteUrl: "https://sendliberty.com",
   generateRobotsTxt: false,
   generateIndexSitemap: false,
   exclude: ["/api/*", "/login", "/dashboard", "/dashboard/*"],
