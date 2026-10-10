@@ -7,7 +7,7 @@
     "build": "next build",
     "postbuild": "next-sitemap --config next-sitemap.config.js",
     "start": "next start",
-    "lint": "biome check .",
+    "lint": "biome check --write .",
     "lint:fix": "biome check --write .",
     "format": "biome format --write ."
   },

@@ -3,10 +3,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Terms of Service | Sendlib",
-  description: "Sendlib Terms of Service and API usage terms.",
+  title: "Terms of Service | Sendliberty",
+  description: "Sendliberty Terms of Service and API usage terms.",
   alternates: {
-    canonical: "https://sendlib.samueltuoyo.com/terms-of-service",
+    canonical: "https://sendliberty.com/terms-of-service",
   },
 };
 
@@ -34,7 +34,7 @@ export default function TermsPage() {
               1. Acceptance of Terms
             </h2>
             <p>
-              By accessing and using Sendlib, you accept and agree to be bound by the terms and
+              By accessing and using Sendliberty, you accept and agree to be bound by the terms and
               provision of this agreement.
             </p>
           </section>
@@ -44,9 +44,9 @@ export default function TermsPage() {
               2. Use License
             </h2>
             <p>
-              Permission is granted to temporarily use Sendlib&apos;s API for personal or commercial
-              use, subject to rate limits and fair use policies. This is the grant of a license, not
-              a transfer of title.
+              Permission is granted to temporarily use Sendliberty&apos;s API for personal or
+              commercial use, subject to rate limits and fair use policies. This is the grant of a
+              license, not a transfer of title.
             </p>
           </section>
 
@@ -55,13 +55,13 @@ export default function TermsPage() {
               3. Acceptable Use & Anti-Spam Policy
             </h2>
             <p>
-              Sendlib is strictly designed for relaying legitimate 1-to-1 transactional emails (e.g.
-              welcome messages, password resets, OTP verification codes, purchase receipts, etc.)
-              triggered by genuine user actions.
+              Sendliberty is strictly designed for relaying legitimate 1-to-1 transactional emails
+              (e.g. welcome messages, password resets, OTP verification codes, purchase receipts,
+              etc.) triggered by genuine user actions.
             </p>
             <p className="mt-2">
               Unsolicited mass emailing, commercial spam, cold outreach campaigns, or any attempt to
-              bypass system rate limits is strictly prohibited. Sendlib reserves the right to
+              bypass system rate limits is strictly prohibited. Sendliberty reserves the right to
               immediately terminate access, revoke API keys, and suspend accounts violating this
               policy without prior notice.
             </p>
@@ -72,10 +72,10 @@ export default function TermsPage() {
               4. Disclaimer
             </h2>
             <p>
-              The materials on Sendlib&apos;s website and API are provided on an &apos;as is&apos;
-              basis. Sendlib makes no warranties, expressed or implied, and hereby disclaims and
-              negates all other warranties including, without limitation, implied warranties or
-              conditions of merchantability.
+              The materials on Sendliberty&apos;s website and API are provided on an &apos;as
+              is&apos; basis. Sendliberty makes no warranties, expressed or implied, and hereby
+              disclaims and negates all other warranties including, without limitation, implied
+              warranties or conditions of merchantability.
             </p>
           </section>
 
@@ -84,9 +84,9 @@ export default function TermsPage() {
               5. Limitations
             </h2>
             <p>
-              In no event shall Sendlib or its suppliers be liable for any damages (including,
+              In no event shall Sendliberty or its suppliers be liable for any damages (including,
               without limitation, damages for loss of data or profit, or due to business
-              interruption) arising out of the use or inability to use the Sendlib API.
+              interruption) arising out of the use or inability to use the Sendliberty API.
             </p>
           </section>
         </div>

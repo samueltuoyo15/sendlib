@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 export async function GET() {
   return NextResponse.json({
     status: "healthy",
-    message: "Sendlib API is running",
+    message: "Sendliberty API is running",
     timestamp: new Date().toISOString(),
   });
 }

@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { EditableCodeBlock } from "@/components/docs/EditableCodeBlock";
 
 export default function BasicSendPage() {
-  const [apiUrl, setApiUrl] = useState("https://sendlib.samueltuoyo.com");
+  const [apiUrl, setApiUrl] = useState("https://sendliberty.com");
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -19,7 +19,7 @@ export default function BasicSendPage() {
       <div className="mb-10">
         <h1 className="text-3xl font-bold tracking-tight text-primary-sendlib mb-4">Basic Send</h1>
         <p className="text-secondary text-lg leading-relaxed">
-          Send a single transactional email instantly using the Sendlib REST API.
+          Send a single transactional email instantly using the Sendliberty REST API.
         </p>
       </div>
 
@@ -28,7 +28,7 @@ export default function BasicSendPage() {
           To send an email, make a secure HTTP <code>POST</code> request to the{" "}
           <code>/api/send</code> endpoint. If you have connected multiple Gmail accounts, you can
           specify which one to use by passing the <code>from</code> field in your request body. If
-          omitted, Sendlib automatically defaults to your first connected Gmail account.
+          omitted, Sendliberty automatically defaults to your first connected Gmail account.
         </p>
 
         <div className="mt-8">
@@ -200,7 +200,7 @@ System.out.println(response.body());`,
         <div className="p-5 rounded-xl border border-outline-variant bg-surface-container-low mt-8 space-y-2">
           <h4 className="font-bold text-primary-sendlib text-base">Authentication Headers</h4>
           <p className="text-sm text-secondary">
-            You can authenticate your requests with Sendlib in two ways:
+            You can authenticate your requests with Sendliberty in two ways:
           </p>
           <ul className="list-disc pl-5 space-y-2 text-secondary">
             <li>
@@ -250,7 +250,7 @@ System.out.println(response.body());`,
               </div>
               <p className="text-xs text-secondary italic">
                 <strong>Top:</strong> Format using{" "}
-                <code>"Sendlib" &lt;samueltuoyo9082@gmail.com&gt;</code>
+                <code>"Sendliberty" &lt;samueltuoyo9082@gmail.com&gt;</code>
                 <br />
                 <strong>Bottom:</strong> Format using just <code>samueltuoyo9082@gmail.com</code>
               </p>
@@ -309,8 +309,8 @@ System.out.println(response.body());`,
           <p>
             <strong className="text-primary-sendlib">Sending concurrently?</strong> Requests using
             the same personal Gmail account are limited to one accepted send per second; Google
-            Workspace accounts are limited to two per second. Sendlib waits for up to 3 seconds for
-            a slot, then records a failed log and returns <code>429</code> with a{" "}
+            Workspace accounts are limited to two per second. Sendliberty waits for up to 3 seconds
+            for a slot, then records a failed log and returns <code>429</code> with a{" "}
             <code>Retry-After</code> header. Serialize sends per Gmail account and retry only after
             the indicated delay, or use <code>/api/batch</code> for a recipient list.
           </p>
@@ -345,10 +345,10 @@ System.out.println(response.body());`,
                 &quot;Upgrade&quot;.
               </li>
               <li>
-                <strong>Only email expecting recipients:</strong> Sendlib automatically throttles
-                your sending speed to keep you under Google&apos;s radar, but if a high percentage
-                of recipients manually click &quot;Report Spam&quot;, Google will permanently
-                penalize your connected account.
+                <strong>Only email expecting recipients:</strong> Sendliberty automatically
+                throttles your sending speed to keep you under Google&apos;s radar, but if a high
+                percentage of recipients manually click &quot;Report Spam&quot;, Google will
+                permanently penalize your connected account.
               </li>
             </ul>
 
@@ -374,7 +374,7 @@ System.out.println(response.body());`,
                       <span className="text-secondary w-16">From:</span>
                       <span className="text-on-background">hello@company.com</span>
                     </div>
-                    <div className="mt-4 pt-3 border-t border-red-500/10 text-secondary leading-relaxed">
+                    <div className="mt-4 pt-3 border-red-500/10 text-secondary leading-relaxed">
                       <p className="mb-2">
                         <strong>URGENT:</strong> We detected an error.
                       </p>
@@ -407,7 +407,7 @@ System.out.println(response.body());`,
                         "Alex at Company" &lt;hello@company.com&gt;
                       </span>
                     </div>
-                    <div className="mt-4 pt-3 border-t border-emerald-500/10 text-secondary leading-relaxed">
+                    <div className="mt-4 pt-3 border-emerald-500/10 text-secondary leading-relaxed">
                       <p className="mb-2">Hi John,</p>
                       <p className="mb-2">
                         We recently rolled out an update that might have disconnected your account.
@@ -427,13 +427,13 @@ System.out.println(response.body());`,
             <div className="mt-4 p-4 bg-primary-sendlib/5 border border-primary-sendlib/20 rounded-lg">
               <h3 className="font-bold text-primary-sendlib text-sm mb-3">Ideal Use Cases</h3>
               <p className="text-sm text-secondary leading-relaxed mb-3">
-                Sendlib is intentionally designed for high-deliverability 1-on-1 communication. It
-                is <strong>not</strong> designed for heavy, image-packed marketing blasts.
+                Sendliberty is intentionally designed for high-deliverability 1-on-1 communication.
+                It is <strong>not</strong> designed for heavy, image-packed marketing blasts.
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <h4 className="text-xs font-bold text-emerald-600 uppercase tracking-wider mb-2">
-                    Great for Sendlib
+                    Great for Sendliberty
                   </h4>
                   <ul className="list-disc pl-4 space-y-1 text-sm text-secondary">
                     <li>Password resets & Magic links</li>
@@ -448,7 +448,7 @@ System.out.println(response.body());`,
                 </div>
                 <div>
                   <h4 className="text-xs font-bold text-red-500 uppercase tracking-wider mb-2">
-                    Bad for Sendlib
+                    Bad for Sendliberty
                   </h4>
                   <ul className="list-disc pl-4 space-y-1 text-sm text-secondary">
                     <li>Weekly marketing newsletters</li>

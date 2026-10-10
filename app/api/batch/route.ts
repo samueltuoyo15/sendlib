@@ -115,7 +115,7 @@ export async function POST(req: NextRequest) {
         {
           success: false,
           message:
-            "Batch sending is a Pro feature. Upgrade at https://sendlib.samueltuoyo.com/dashboard/settings to unlock it.",
+            "Batch sending is a Pro feature. Upgrade at https://sendliberty.com/dashboard/settings to unlock it.",
         },
         { status: 403 }
       );
@@ -176,7 +176,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          message: `Gmail account '${fromEmail}' is not connected. Please go to your Sendlib dashboard, connect this Gmail account, and try again.`,
+          message: `Gmail account '${fromEmail}' is not connected. Please go to your Sendliberty dashboard, connect this Gmail account, and try again.`,
         },
         { status: 400 }
       );

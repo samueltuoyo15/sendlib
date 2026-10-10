@@ -8,7 +8,14 @@ import { isTrustedBrowserRequest } from "./lib/requestSecurity";
  * It cannot be fooled into authenticating anyone on its own.
  */
 export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  const host = request.headers.get("x-forwarded-host") || request.headers.get("host") || "";
+  const isLegacyHost = host.toLowerCase().includes("sendlib.samueltuoyo.com");
+  const { pathname, search } = request.nextUrl;
+
+  if (isLegacyHost && !pathname.startsWith("/api/")) {
+    const targetUrl = new URL(`${pathname}${search}`, "https://sendliberty.com");
+    return NextResponse.redirect(targetUrl, 308);
+  }
 
   if (pathname.startsWith("/api/")) {
     const keyEndpoint =
@@ -45,5 +52,7 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/api/:path*"],
+  matcher: [
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
+  ],
 };

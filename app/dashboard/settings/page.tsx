@@ -299,7 +299,7 @@ export default function SettingsPage() {
                   <h3 className="font-headline-md font-bold text-base text-red-500">Sign Out</h3>
                 </div>
                 <p className="text-sm text-secondary leading-relaxed">
-                  Sign out of your Sendlib account on this device.
+                  Sign out of your Sendliberty account on this device.
                 </p>
               </div>
               <Button
@@ -427,7 +427,7 @@ export default function SettingsPage() {
               Sign Out
             </DialogTitle>
             <DialogDescription className="text-secondary text-sm leading-relaxed mt-1">
-              Are you sure you want to sign out of your Sendlib account? You will need to log in
+              Are you sure you want to sign out of your Sendliberty account? You will need to log in
               again to access your dashboard.
             </DialogDescription>
           </DialogHeader>
@@ -461,8 +461,8 @@ export default function SettingsPage() {
               Delete Account
             </DialogTitle>
             <DialogDescription className="text-secondary text-sm leading-relaxed mt-1">
-              This will permanently delete your Sendlib account and all associated data, including
-              connected Gmail accounts, email logs, and API keys. This action is{" "}
+              This will permanently delete your Sendliberty account and all associated data,
+              including connected Gmail accounts, email logs, and API keys. This action is{" "}
               <strong>irreversible</strong>.
             </DialogDescription>
           </DialogHeader>

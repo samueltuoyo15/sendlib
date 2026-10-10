@@ -18,7 +18,7 @@ function getAppUrl(): string {
 }
 
 function getFromAddress(): string {
-  return process.env.SENDLIB_FROM?.trim() || '"Sendlib" <samueltuoyo9082@gmail.com>';
+  return process.env.SENDLIB_FROM?.trim() || '"Sendliberty" <samueltuoyo9082@gmail.com>';
 }
 
 /**

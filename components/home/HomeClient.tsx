@@ -13,7 +13,7 @@ import { HugeiconsIcon } from "@hugeicons/react";
 
 export default function HomeClient() {
   const { data: user } = useMe();
-  const [apiUrl, setApiUrl] = useState("https://sendlib.samueltuoyo.com");
+  const [apiUrl, setApiUrl] = useState("https://sendliberty.com");
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -31,7 +31,7 @@ export default function HomeClient() {
       color: "bg-indigo-500",
       question: "Do I need to verify my domain or configure DNS records?",
       answer:
-        "No! Because Sendlib routes your email relay requests securely through your already verified, connected Google accounts, there is absolutely zero DNS configuration required. You do not need to add SPF, DKIM, MX, or TXT records to start sending immediately.",
+        "No! Because Sendliberty routes your email relay requests securely through your already verified, connected Google accounts, there is absolutely zero DNS configuration required. You do not need to add SPF, DKIM, MX, or TXT records to start sending immediately.",
     },
     {
       color: "bg-purple-500",
@@ -39,12 +39,12 @@ export default function HomeClient() {
       answer: (
         <>
           Yes! If your custom company domain is connected to Google Workspace, simply link that
-          account to Sendlib via Google OAuth. Sendlib will send transactional emails directly from
-          your custom domain (e.g.{" "}
+          account to Sendliberty via Google OAuth. Sendliberty will send transactional emails
+          directly from your custom domain (e.g.{" "}
           <code className="bg-surface-variant/80 px-1.5 py-0.5 rounded text-xs">
             hello@mycompany.com
           </code>
-          ) with zero extra DNS or SPF configuration required on Sendlib. Plus, Google Workspace
+          ) with zero extra DNS or SPF configuration required on Sendliberty. Plus, Google Workspace
           accounts get up to <strong>1,000 emails/day on Free</strong> (2,000/day on Pro) per
           account!
         </>
@@ -54,7 +54,7 @@ export default function HomeClient() {
       color: "bg-emerald-500",
       question: "Will my emails land in the inbox?",
       answer:
-        "Sendlib submits messages through Google's official Gmail API, but no email service can guarantee inbox placement. Gmail and the recipient's provider still classify each accepted message using sender reputation, content, authentication, recipient engagement, and other signals.",
+        "Sendliberty submits messages through Google's official Gmail API, but no email service can guarantee inbox placement. Gmail and the recipient's provider still classify each accepted message using sender reputation, content, authentication, recipient engagement, and other signals.",
     },
     {
       color: "bg-pink-500",
@@ -62,7 +62,7 @@ export default function HomeClient() {
       answer: (
         <>
           Other platforms limit you to only 100 free emails per day on their free plans and require
-          strict domain verification. With Sendlib, you can send up to{" "}
+          strict domain verification. With Sendliberty, you can send up to{" "}
           <strong>200 emails/day</strong> per connected personal Gmail account (500/day on Pro), or
           up to <strong>1,000 emails/day</strong> per connected Google Workspace account (2,000/day
           on Pro).
@@ -314,7 +314,7 @@ export default function HomeClient() {
               </h2>
               <p className="text-secondary w-full max-w-2xl mx-auto text-base leading-relaxed">
                 Traditional email APIs force you to configure DNS records and custom domains before
-                sending a single email. Sendlib uses the Gmail account your product already has.
+                sending a single email. Sendliberty uses the Gmail account your product already has.
               </p>
             </div>
 
@@ -325,7 +325,7 @@ export default function HomeClient() {
                     <th className="px-6 py-4 font-bold text-secondary w-2/5">Feature</th>
                     <th className="px-6 py-4 text-center w-3/10 bg-primary-sendlib/5 border-x border-outline-variant/40">
                       <span className="bg-white text-black text-xs font-extrabold px-3.5 py-1 rounded-full shadow-xs inline-block">
-                        Sendlib
+                        Sendliberty
                       </span>
                     </th>
                     <th className="px-6 py-4 text-center font-bold text-secondary w-3/10">
@@ -513,8 +513,8 @@ export default function HomeClient() {
                 Frequently Asked Questions
               </h2>
               <p className="font-body-lg text-body-lg text-on-surface-variant max-w-[600px] mx-auto">
-                Got questions about how Sendlib is different from other transactional email sending
-                platforms? We have answers.
+                Got questions about how Sendliberty is different from other transactional email
+                sending platforms? We have answers.
               </p>
             </div>
 
@@ -569,10 +569,10 @@ export default function HomeClient() {
         <div className="flex flex-col md:flex-row justify-between items-start px-margin-mobile md:px-margin-desktop py-xl gap-10 max-w-7xl mx-auto">
           <div className="flex flex-col gap-xs text-left">
             <span className="text-xl font-headline-md font-bold tracking-tight text-white">
-              Sendlib
+              Sendliberty
             </span>
             <p className="font-label-sm text-label-sm text-on-surface-variant max-w-[250px] md:max-w-none">
-              © 2026 Sendlib. All rights reserved.
+              © 2026 Sendliberty. All rights reserved.
             </p>
           </div>
           <div className="flex flex-col sm:flex-row gap-8 sm:gap-16 w-full md:w-auto">
@@ -581,7 +581,7 @@ export default function HomeClient() {
                 Product
               </span>
               <a
-                href="https://github.com/samueltuoyo15/sendlib"
+                href="https://github.com/samueltuoyo15/sendliberty"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="font-label-sm text-label-sm text-on-surface-variant hover:text-primary-sendlib transition-colors flex items-center gap-1.5"

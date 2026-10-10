@@ -5,7 +5,7 @@ import { EditableCodeBlock } from "@/components/docs/EditableCodeBlock";
 import { useEffect, useState } from "react";
 
 export default function TemplatesDocsPage() {
-  const [apiUrl, setApiUrl] = useState("https://sendlib.samueltuoyo.com");
+  const [apiUrl, setApiUrl] = useState("https://sendliberty.com");
 
   useEffect(() => {
     if (typeof window !== "undefined") {

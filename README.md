@@ -115,8 +115,8 @@ To get Sendlib up and running on your local machine, follow these steps:
 
 1.  **Clone the Repository**:
     ```bash
-    git clone https://github.com/samueltuoyo15/send-liberty.git
-    cd send-liberty
+    git clone https://github.com/samueltuoyo15/sendliberty.git
+    cd sendliberty
     ```
 
 2.  **Install Dependencies**:

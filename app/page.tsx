@@ -2,18 +2,18 @@ import HomeClient from "@/components/home/HomeClient";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Sendlib - Send Transactional Emails to Your Customers Seamlessly",
+  title: "Sendliberty: Send Transactional Emails to Your Customers Seamlessly",
   description:
     "The fastest way for founders and developers to send transactional emails to their customers seamlessly, without any domain configuration required.",
   alternates: {
-    canonical: "https://sendlib.samueltuoyo.com",
+    canonical: "https://sendliberty.com",
   },
   openGraph: {
-    title: "Sendlib - Send Transactional Emails to Your Customers Seamlessly",
+    title: "Sendliberty: Send Transactional Emails to Your Customers Seamlessly",
     description:
       "The fastest way for founders and developers to send transactional emails to their customers seamlessly, without any domain configuration required.",
-    url: "https://sendlib.samueltuoyo.com",
-    siteName: "Sendlib",
+    url: "https://sendliberty.com",
+    siteName: "Sendliberty",
     type: "website",
   },
 };
@@ -23,31 +23,31 @@ const jsonLd = {
   "@graph": [
     {
       "@type": "WebSite",
-      "@id": "https://sendlib.samueltuoyo.com/#website",
-      url: "https://sendlib.samueltuoyo.com",
-      name: "Sendlib",
+      "@id": "https://sendliberty.com/#website",
+      url: "https://sendliberty.com",
+      name: "Sendliberty",
       description: "Send transactional emails seamlessly to their customers",
       publisher: {
-        "@id": "https://sendlib.samueltuoyo.com/#organization",
+        "@id": "https://sendliberty.com/#organization",
       },
     },
     {
       "@type": "Organization",
-      "@id": "https://sendlib.samueltuoyo.com/#organization",
-      name: "Sendlib",
-      url: "https://sendlib.samueltuoyo.com",
-      logo: "https://sendlib.samueltuoyo.com/logo.png",
+      "@id": "https://sendliberty.com/#organization",
+      name: "Sendliberty",
+      url: "https://sendliberty.com",
+      logo: "https://sendliberty.com/logo.png",
       email: "samueltuoyo9082@gmail.com",
     },
     {
       "@type": "SoftwareApplication",
-      "@id": "https://sendlib.samueltuoyo.com/#software",
-      name: "Sendlib",
+      "@id": "https://sendliberty.com/#software",
+      name: "Sendliberty",
       operatingSystem: "All",
       applicationCategory: "DeveloperApplication",
       description:
-        "Sendlib enables founders and developers to send transactional emails to their customers fast and seamlessly without any domain configuration.",
-      url: "https://sendlib.samueltuoyo.com",
+        "Sendliberty enables founders and developers to send transactional emails to their customers fast and seamlessly without any domain configuration.",
+      url: "https://sendliberty.com",
       offers: {
         "@type": "Offer",
         price: "0",
@@ -56,30 +56,30 @@ const jsonLd = {
     },
     {
       "@type": "SiteNavigationElement",
-      "@id": "https://sendlib.samueltuoyo.com/#navigation",
+      "@id": "https://sendliberty.com/#navigation",
       name: ["API Documentation", "Privacy Policy", "Terms of Service", "Login"],
       url: [
-        "https://sendlib.samueltuoyo.com/docs",
-        "https://sendlib.samueltuoyo.com/privacy-policy",
-        "https://sendlib.samueltuoyo.com/terms-of-service",
-        "https://sendlib.samueltuoyo.com/login",
+        "https://sendliberty.com/docs",
+        "https://sendliberty.com/privacy-policy",
+        "https://sendliberty.com/terms-of-service",
+        "https://sendliberty.com/login",
       ],
     },
     {
       "@type": "BreadcrumbList",
-      "@id": "https://sendlib.samueltuoyo.com/#breadcrumb",
+      "@id": "https://sendliberty.com/#breadcrumb",
       itemListElement: [
         {
           "@type": "ListItem",
           position: 1,
           name: "Home",
-          item: "https://sendlib.samueltuoyo.com",
+          item: "https://sendliberty.com",
         },
       ],
     },
     {
       "@type": "FAQPage",
-      "@id": "https://sendlib.samueltuoyo.com/#faq",
+      "@id": "https://sendliberty.com/#faq",
       mainEntity: [
         {
           "@type": "Question",

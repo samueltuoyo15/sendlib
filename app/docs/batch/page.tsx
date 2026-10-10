@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { EditableCodeBlock } from "@/components/docs/EditableCodeBlock";
 
 export default function BatchSendPage() {
-  const [apiUrl, setApiUrl] = useState("https://sendlib.samueltuoyo.com");
+  const [apiUrl, setApiUrl] = useState("https://sendliberty.com");
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -27,7 +27,7 @@ export default function BatchSendPage() {
         </div>
         <p className="text-secondary text-lg leading-relaxed">
           <strong>You must be subscribed to Pro first.</strong> Send one email to hundreds of
-          recipients in a single API call. Sendlib queues the job and delivers each email in the
+          recipients in a single API call. Sendliberty queues the job and delivers each email in the
           background, automatically respecting Gmail&apos;s rate limits.
         </p>
       </div>
@@ -451,10 +451,11 @@ System.out.println(response.body());`,
             The recipient cap matches Gmail&apos;s own daily sending limit for the connected
             account. If your batch hits the daily limit mid-send (e.g., you already sent emails
             earlier today), the job status will change to <code>paused_limit_reached</code>. You do
-            not need to do anything! Sendlib automatically tracks Gmail&apos;s 24-hour rolling quota
-            and will automatically resume sending the remaining recipients as soon as your limit
-            resets. To send to more people immediately without waiting, connect additional Gmail
-            accounts and split batches across them using different <code>from</code> addresses.
+            not need to do anything! Sendliberty automatically tracks Gmail&apos;s 24-hour rolling
+            quota and will automatically resume sending the remaining recipients as soon as your
+            limit resets. To send to more people immediately without waiting, connect additional
+            Gmail accounts and split batches across them using different <code>from</code>{" "}
+            addresses.
           </p>
         </div>
 
@@ -465,9 +466,9 @@ System.out.println(response.body());`,
           </h3>
           <p className="text-sm text-secondary">
             Attachments are intentionally not supported on <code>/api/batch</code>. If you attach a
-            file to a batch of 500 emails, Sendlib would have to base64-encode and upload that file
-            500 separate times to Gmail&apos;s API. That is extremely slow, memory-intensive, and
-            would burn through your daily quota much faster than expected.
+            file to a batch of 500 emails, Sendliberty would have to base64-encode and upload that
+            file 500 separate times to Gmail&apos;s API. That is extremely slow, memory-intensive,
+            and would burn through your daily quota much faster than expected.
           </p>
           <p className="text-sm text-secondary mt-3">
             The right approach is to <strong>host your file</strong> somewhere (e.g. your own
@@ -537,10 +538,10 @@ System.out.println(response.body());`,
                 &quot;Upgrade&quot;.
               </li>
               <li>
-                <strong>Only email expecting recipients:</strong> Sendlib automatically throttles
-                your sending speed to keep you under Google&apos;s radar, but if a high percentage
-                of recipients manually click &quot;Report Spam&quot;, Google will permanently
-                penalize your connected account.
+                <strong>Only email expecting recipients:</strong> Sendliberty automatically
+                throttles your sending speed to keep you under Google&apos;s radar, but if a high
+                percentage of recipients manually click &quot;Report Spam&quot;, Google will
+                permanently penalize your connected account.
               </li>
             </ul>
 
@@ -619,13 +620,13 @@ System.out.println(response.body());`,
             <div className="mt-4 p-4 bg-primary-sendlib/5 border border-primary-sendlib/20 rounded-lg">
               <h3 className="font-bold text-primary-sendlib text-sm mb-3">Ideal Use Cases</h3>
               <p className="text-sm text-secondary leading-relaxed mb-3">
-                Sendlib is intentionally designed for high-deliverability 1-on-1 communication. It
-                is <strong>not</strong> designed for heavy, image-packed marketing blasts.
+                Sendliberty is intentionally designed for high-deliverability 1-on-1 communication.
+                It is <strong>not</strong> designed for heavy, image-packed marketing blasts.
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <h4 className="text-xs font-bold text-emerald-600 uppercase tracking-wider mb-2">
-                    Great for Sendlib
+                    Great for Sendliberty
                   </h4>
                   <ul className="list-disc pl-4 space-y-1 text-sm text-secondary">
                     <li>Password resets & Magic links</li>
@@ -640,7 +641,7 @@ System.out.println(response.body());`,
                 </div>
                 <div>
                   <h4 className="text-xs font-bold text-red-500 uppercase tracking-wider mb-2">
-                    Bad for Sendlib
+                    Bad for Sendliberty
                   </h4>
                   <ul className="list-disc pl-4 space-y-1 text-sm text-secondary">
                     <li>Weekly marketing newsletters</li>

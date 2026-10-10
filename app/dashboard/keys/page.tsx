@@ -180,8 +180,8 @@ function KeysContent() {
           <div>
             <p className="font-bold text-sm text-amber-200">No Gmail account connected</p>
             <p className="text-xs text-amber-300/80 mt-0.5">
-              You must connect at least one Gmail account before creating API keys so Sendlib knows
-              where to dispatch your emails.
+              You must connect at least one Gmail account before creating API keys so Sendliberty
+              knows where to dispatch your emails.
             </p>
           </div>
           <Link href="/dashboard/accounts">
@@ -293,7 +293,7 @@ function KeysContent() {
                         </h4>
                         <p className="text-xs text-secondary leading-relaxed">
                           You haven&apos;t generated any API keys yet. Create one to start using the
-                          Sendlib API.
+                          Sendliberty API.
                         </p>
                         <div className="pt-1">
                           <Button
